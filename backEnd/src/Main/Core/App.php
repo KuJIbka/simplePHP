@@ -8,7 +8,7 @@ abstract class App
 {
     public function __construct()
     {
-        require_once __DIR__.'/defines.php';
+        require_once __DIR__ . '/defines.php';
         Config::get()->loadFromPath(PATH_CONFIG.'/default');
         Config::get()->loadFromPath(PATH_CONFIG.'/prod');
 

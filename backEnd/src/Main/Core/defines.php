@@ -2,9 +2,10 @@
 
 define(
     "PATH_PROJECT_ROOT",
-    dirname(dirname(dirname(__DIR__)))
+    dirname(dirname(dirname(dirname(__DIR__))))
 );
-define("PATH_ROOT", PATH_PROJECT_ROOT.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Main');
+define("PATH_BACKEND", PATH_PROJECT_ROOT.DIRECTORY_SEPARATOR.'backEnd');
+define("PATH_ROOT", PATH_BACKEND.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Main');
 define(
     "PATH_CONFIG",
     PATH_ROOT.

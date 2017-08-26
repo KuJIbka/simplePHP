@@ -1,4 +1,5 @@
 .idea
-vendor
-/src/Main/Core/config/prod/
+
 /node_modules/
+/backEnd/vendor/
+/backEnd/src/Main/Core/config/prod/
