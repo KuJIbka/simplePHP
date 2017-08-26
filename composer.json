@@ -1,0 +1,14 @@
+{
+	"autoload": {
+        "psr-0": { "": "src/" }
+    },
+	"require": {
+		"twig/twig": "2.4.*",
+		"doctrine/orm": "2.5.*",
+		"sabre/http": "4.2.*",
+        "defuse/php-encryption": "2.0.*",
+		"symfony/translation": "3.3.*",
+        "symfony/yaml": "3.3.*",
+        "symfony/console": "3.3.*"
+	}
+}

@@ -1,0 +1,15 @@
+<?php
+
+define(
+    "PATH_PROJECT_ROOT",
+    dirname(dirname(dirname(__DIR__)))
+);
+define("PATH_ROOT", PATH_PROJECT_ROOT.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'Main');
+define(
+    "PATH_CONFIG",
+    PATH_ROOT.
+    DIRECTORY_SEPARATOR.'Core'.
+    DIRECTORY_SEPARATOR.'config'
+);
+define("PATH_LANGS", PATH_ROOT.DIRECTORY_SEPARATOR.'Lang');
+define("PATH_PUBLIC", PATH_PROJECT_ROOT.DIRECTORY_SEPARATOR.'web');
