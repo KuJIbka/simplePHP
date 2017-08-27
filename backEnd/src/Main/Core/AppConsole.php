@@ -2,7 +2,6 @@
 
 namespace Main\Core;
 
-use Main\Command\EchoCommand;
 use Main\Command\LangToJsonCommand;
 use Symfony\Component\Console\Application;
 

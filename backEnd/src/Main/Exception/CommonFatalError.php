@@ -2,7 +2,6 @@
 
 namespace Main\Exception;
 
-use Main\Exception\BaseException;
 use Throwable;
 
 class CommonFatalError extends BaseException

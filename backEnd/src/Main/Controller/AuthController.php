@@ -2,13 +2,10 @@
 
 namespace Main\Controller;
 
-use Defuse\Crypto\Crypto;
 use Doctrine\DBAL\LockMode;
 use Main\Form\Data\LoginFormData;
-use Main\Exception\BaseException;
 use Main\Exception\WrongData;
 use Main\Factory\ResponseFactory;
-use Main\Service\Config;
 use Main\Service\DB;
 use Main\Service\SessionManager;
 use Main\Struct\DefaultResponseData;

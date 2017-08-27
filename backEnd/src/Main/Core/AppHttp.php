@@ -57,10 +57,6 @@ class AppHttp extends App
                 }
                 $response->setBody('Что-то пошло не так, повторите, пожалуйста, операцию');
             }
-            echo "\n\n\n";
-            echo $e->getMessage();
-            echo "\n\n\n";
-            exit;
             Sapi::sendResponse($response);
         }
     }

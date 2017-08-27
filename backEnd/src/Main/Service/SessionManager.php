@@ -2,7 +2,7 @@
 
 namespace Main\Service;
 
-use Exception\CommonFatalError;
+use Main\Exception\CommonFatalError;
 use Main\Entity\User;
 use Main\Utils\AbstractSingleton;
 
