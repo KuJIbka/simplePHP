@@ -22,6 +22,7 @@ trait FormValidatorTrait
 
     /**
      * @param string|LocalisationString|LocalisationChoiceString $customError
+     * @return $this
      */
     public function setCustomError($customError)
     {
@@ -39,6 +40,7 @@ trait FormValidatorTrait
 
     /**
      * @param string|LocalisationString|LocalisationChoiceString $error
+     * @return $this
      */
     public function setError($error)
     {
