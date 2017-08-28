@@ -5,7 +5,6 @@ namespace Main\Service;
 use Main\Utils\AbstractSingleton;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
 use Symfony\Component\Translation\MessageSelector;
-use Symfony\Component\Translation\Translator;
 
 /**
 * @method static TranslationsService get()

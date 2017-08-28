@@ -21,6 +21,14 @@ class ExpandTranslator extends Translator
         }
     }
 
+    /**
+     * @param string|LocalisationString|LocalisationChoiceString $idOrLocalisationString
+     * @param null|int $number
+     * @param array $parameters
+     * @param null|string $domain
+     * @param null|string $locale
+     * @return string
+     */
     public function transChoice(
         $idOrLocalisationString,
         $number = null,
@@ -33,7 +41,11 @@ class ExpandTranslator extends Translator
             $parameters = !empty($parameters) ? $parameters : $idOrLocalisationString->getData();
             $domain = $domain ?: $idOrLocalisationString->getDomain();
             $locale = $locale ?: $idOrLocalisationString->getLocale();
-            $number = $number ?: $idOrLocalisationString->getChoiceNumber();
+            if (!is_null($number)) {
+                if ($idOrLocalisationString instanceof LocalisationChoiceString) {
+                    $number = $idOrLocalisationString->getChoiceNumber();
+                }
+            }
             return parent::transChoice($id, $number, $parameters, $domain, $locale);
         } else {
             return parent::transChoice($idOrLocalisationString, $number, $parameters, $domain, $locale);
