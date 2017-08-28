@@ -4,6 +4,7 @@ namespace Main\Struct;
 
 use Main\Exception\BaseException;
 use Main\Exception\BaseFormDataException;
+use Main\Service\TranslationsService;
 
 class DefaultResponseData implements \JsonSerializable
 {
@@ -74,7 +75,7 @@ class DefaultResponseData implements \JsonSerializable
     {
         return [
             'type' => $this->getType(),
-            'text' => $this->getText(),
+            'text' => TranslationsService::get()->getTranslator()->trans($this->getText()),
             'moveTo' => $this->getMoveTo(),
             'data' => $this->getData(),
         ];
@@ -84,7 +85,7 @@ class DefaultResponseData implements \JsonSerializable
     {
         $data = new self();
         $data->setType($e->getType())
-            ->setText($e->getMessage())
+            ->setText(TranslationsService::get()->getTranslator()->transLocalisationString($e->getMessage()))
             ->setMoveTo($e->getMoveTo())
             ->setData($e->getData());
         if ($e instanceof BaseFormDataException) {

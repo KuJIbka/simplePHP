@@ -18,8 +18,8 @@ class LoginFormData extends AbstractFormData
     protected function getRules(): array
     {
         return [
-            'login' => new RuleContainer([new Trim(), new NotBlank('Логин не должен быть пустым')]),
-            'password' => new RuleContainer([new Trim(), new NotBlank('Пароль не должен быть пустым')]),
+            'login' => new RuleContainer([new Trim(), new NotBlank()]),
+            'password' => new RuleContainer([new Trim(), new NotBlank()]),
         ];
     }
 

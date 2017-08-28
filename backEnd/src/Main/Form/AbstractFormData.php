@@ -4,13 +4,27 @@ namespace Main\Form;
 
 use Main\Form\Validator\FormValidatorTrait;
 use Main\Form\Validator\ValidatorInterface;
+use Main\Service\TranslationsService;
+use Main\Struct\LocalisationChoiceString;
+use Main\Struct\LocalisationString;
 
 abstract class AbstractFormData implements DataManager, ValidatorInterface
 {
     use FormValidatorTrait;
 
+    /**
+     * @var string
+     */
     protected $csrfToken;
+
+    /**
+     * @var array
+     */
     protected $sourceData;
+
+    /**
+     * @param string[]|LocalisationString[]|LocalisationChoiceString[] $error
+     */
     private $errors = [];
 
     /**
@@ -18,7 +32,7 @@ abstract class AbstractFormData implements DataManager, ValidatorInterface
      */
     abstract protected function getRules(): array;
 
-    public function __construct($data, $checkCsrfToken = false)
+    public function __construct(array $data, $checkCsrfToken = false)
     {
         $this->sourceData = $data;
         $this->execute();
@@ -38,13 +52,14 @@ abstract class AbstractFormData implements DataManager, ValidatorInterface
             $filteredValue = $ruleContainer->execute();
             if (!$ruleContainer->isValid()) {
                 $this->errors[$param] = $ruleContainer->getError();
-                break;
             }
             $this->$param = $filteredValue;
         }
-        return true;
     }
 
+    /**
+     * @return string[]|LocalisationString[]|LocalisationChoiceString[] $error
+     */
     public function getErrors()
     {
         return $this->errors;
@@ -55,17 +70,13 @@ abstract class AbstractFormData implements DataManager, ValidatorInterface
         return null;
     }
 
-    /**
-     * @return bool
-     */
-    public function isValid()
+    public function isValid(): bool
     {
         return empty($this->errors);
     }
 
     /**
-     * выдает список ошибок в виде key-value массива, где key - имя атрибута, value - соответствующая атрибуту ошибка
-     * @return array
+     * @return string[]|LocalisationString[]|LocalisationChoiceString[]
      */
     public function getFormsErrorsData(): array
     {
@@ -81,16 +92,37 @@ abstract class AbstractFormData implements DataManager, ValidatorInterface
     }
 
     /**
-     * список ошибок валидации одной строкой
+     * @return string[]
+     */
+    public function getTranslatedErrorsData(): array
+    {
+        $result = [];
+        $translator = TranslationsService::get()->getTranslator();
+        foreach ($this->getFormsErrorsData() as $param => $error) {
+            if ($error instanceof LocalisationChoiceString) {
+                $result[$param] = $translator->transChoice($error);
+            } else {
+                $result[$param] = $translator->trans($error);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return string
      */
-    public function getTranslatedErrors(): string
+    public function getTranslatedErrorsOneString(): string
     {
-        if ($this->isValid()) {
-            return '';
+        $result = '';
+        $first = true;
+        foreach ($this->getFormsErrorsData() as $param => $error) {
+            if ($first) {
+                $first = false;
+            } else {
+                $result .= '\n';
+            }
+            $result .= TranslationsService::get()->getTranslator()->trans($error);
         }
-
-        $translatedErrors = $this->getFormsErrorsData();
-        return implode(",\n ", $translatedErrors);
+        return $result;
     }
 }

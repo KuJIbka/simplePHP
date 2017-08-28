@@ -2,11 +2,9 @@
 
 namespace Main\Form\Data;
 
-use Main\Form\Converter\ToId;
+use Form\DefaultsRuleSets;
 use Main\Form\AbstractFormData;
-use Main\Form\Converter\Trim;
 use Main\Form\RuleContainer;
-use Main\Form\Validator\NotBlank;
 
 class IdFormData extends AbstractFormData
 {
@@ -27,7 +25,7 @@ class IdFormData extends AbstractFormData
     protected function getRules(): array
     {
         return [
-            'id' => new RuleContainer([ new Trim(), new ToId(), new NotBlank()], 'Неверный Id'),
+            'id' => DefaultsRuleSets::id(),
         ];
     }
 }

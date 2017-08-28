@@ -18,13 +18,13 @@ class TranslationsService extends AbstractSingleton
     protected static $inst;
 
     /**
-     * @var Translator
+     * @var ExpandTranslator
      */
     protected $translator;
 
     protected function init()
     {
-        $this->translator = new Translator('ru_RU', new MessageSelector());
+        $this->translator = new ExpandTranslator('ru_RU', new MessageSelector());
         $this->translator->addLoader('php', new PhpFileLoader());
         $this->loadFromPath(PATH_LANGS.DIRECTORY_SEPARATOR);
     }
@@ -55,7 +55,7 @@ class TranslationsService extends AbstractSingleton
         $this->translator->addResource('php', $filePath, $locale);
     }
 
-    public function getAvailableLangs()
+    public function getAvailableLangs(): array
     {
         return [ self::LANG_RU, self::LANG_EN ];
     }
@@ -65,7 +65,7 @@ class TranslationsService extends AbstractSingleton
         return in_array($lang, $this->getAvailableLangs(), true);
     }
 
-    public function getTranslator(): Translator
+    public function getTranslator(): ExpandTranslator
     {
         return $this->translator;
     }

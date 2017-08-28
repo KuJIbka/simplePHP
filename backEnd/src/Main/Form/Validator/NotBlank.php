@@ -2,6 +2,8 @@
 
 namespace Main\Form\Validator;
 
+use Main\Struct\LocalisationString;
+
 class NotBlank extends BaseFormValidator
 {
     public function execute()
@@ -12,8 +14,11 @@ class NotBlank extends BaseFormValidator
         return $this->getValue();
     }
 
-    protected function getDefaultErrorText(): string
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultErrorText()
     {
-        return 'Значение не должно быть пустым';
+        return new LocalisationString('L_ERROR_FIELD_CAN_NOT_BE_EMPTY');
     }
 }
