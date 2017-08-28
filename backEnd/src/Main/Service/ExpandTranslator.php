@@ -8,6 +8,13 @@ use Symfony\Component\Translation\Translator;
 
 class ExpandTranslator extends Translator
 {
+    /**
+     * @param string|LocalisationString $idOrLocalisationString
+     * @param array $parameters
+     * @param null|string $domain
+     * @param null|string $locale
+     * @return string
+     */
     public function trans($idOrLocalisationString, array $parameters = [], $domain = null, $locale = null)
     {
         if ($idOrLocalisationString instanceof LocalisationString) {
