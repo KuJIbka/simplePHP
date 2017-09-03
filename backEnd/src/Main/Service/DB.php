@@ -30,14 +30,15 @@ class DB extends AbstractSingleton
             'pass' => $dbConf['pass'],
         ];
         $doctrinePaths= [
-            PATH_ROOT.'/src'
+            PATH_ROOT
         ];
         $doctrineConfig = Setup::createAnnotationMetadataConfiguration(
             $doctrinePaths,
             $isDebug,
-            PATH_ROOT.'/Core/proxies',
+            PATH_ROOT.DIRECTORY_SEPARATOR.'Core'.DIRECTORY_SEPARATOR.'proxies',
             CacheDriver::get()->getCacheDriver()
         );
+
         if ($isDebug) {
             $logger = new \Doctrine\DBAL\Logging\DebugStack();
             $doctrineConfig->setSQLLogger($logger);

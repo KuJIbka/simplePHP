@@ -7,22 +7,26 @@ namespace Main\Entity;
  */
 class User
 {
-    /** @Id @Column(type="integer") @GeneratedValue  */
+    /**
+     * @Id
+     * @Column(type="integer", nullable=false, options={"unsigned": true})
+     * @GeneratedValue
+     */
     private $id;
 
-    /** @Column(type="string") */
+    /** @Column(type="string", length=30, nullable=false) */
     private $name;
 
-    /** @Column(type="string", length=20, unique=true) */
+    /** @Column(type="string", length=20, nullable=false, unique=true) */
     private $login;
 
-    /** @Column(type="string", length=255) */
+    /** @Column(type="string", length=255, nullable=false) */
     private $password;
 
-    /** @Column(type="float") */
+    /** @Column(type="decimal", precision=8, scale=2, nullable=false) */
     private $balance;
 
-    /** @OneToOne(targetEntity="UserLimit", mappedBy="user")*/
+    /** @OneToOne(targetEntity="UserLimit", mappedBy="user") */
     private $userLimit;
 
     public function getId(): int

@@ -15,10 +15,10 @@ class UserLimit
      */
     private $user;
 
-    /** @Column(name="login_try_count", type="integer") */
+    /** @Column(name="login_try_count", type="integer", nullable=false, options={"unsigned": true}) */
     private $loginTryCount = 0;
 
-    /** @Column(name="login_try_count_time", type="integer") */
+    /** @Column(name="login_try_count_time", type="integer", nullable=false, options={"unsigned": true}) */
     private $loginTryCountTime = 0;
 
     /**

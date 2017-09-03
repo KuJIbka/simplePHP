@@ -9,6 +9,10 @@ return [
             'dbName' => 'simple_php'
         ]
     ],
+    'migrations' => [
+        'dir' => PATH_ROOT.DIRECTORY_SEPARATOR.'Migrations',
+        'namespace' => 'Main\\Migrations',
+    ],
     'loginCountMax' => 3,
     'loginCountMaxTime' => 3600,
     'debug' => true,

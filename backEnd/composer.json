@@ -5,6 +5,7 @@
 	"require": {
 		"twig/twig": "2.4.*",
 		"doctrine/orm": "2.5.*",
+		"doctrine/migrations": "1.5.0",
 		"sabre/http": "4.2.*",
         "defuse/php-encryption": "2.0.*",
 		"symfony/translation": "3.3.*",

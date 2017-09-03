@@ -19,7 +19,7 @@ class AuthController extends BaseController
         if ($sessionManager->isLogged()) {
             throw new WrongData();
         }
-        $data = new LoginFormData($_GET);
+        $data = new LoginFormData($_POST);
         if (!$data->isValid()) {
             throw (new BaseFormDataException())->setFormDataErrors($data->getTranslatedErrorsData());
         }
