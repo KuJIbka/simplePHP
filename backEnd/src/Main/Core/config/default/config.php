@@ -7,7 +7,8 @@ return [
             'user' => 'root',
             'port' => '3306',
             'pass' => '',
-            'dbName' => 'simple_php'
+            'dbName' => 'simple_php',
+            'charset' => 'UTF8',
         ]
     ],
     'migrations' => [

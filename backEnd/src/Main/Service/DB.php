@@ -27,7 +27,7 @@ class DB extends AbstractSingleton
             'host' => $dbConf['host'],
             'port' => $dbConf['port'],
             'dbname' => $dbConf['dbName'],
-            'charset' => 'UTF8',
+            'charset' => $dbConf['charset'],
             'user' => $dbConf['user'],
             'pass' => $dbConf['pass'],
         ];
