@@ -25,6 +25,7 @@ class DB extends AbstractSingleton
         $doctrineParams = [
             'driver' => 'pdo_mysql',
             'dbname' => $dbConf['dbName'],
+            'port' => $dbConf['port'],
             'charset' => 'UTF8',
             'user' => $dbConf['user'],
             'pass' => $dbConf['pass'],
