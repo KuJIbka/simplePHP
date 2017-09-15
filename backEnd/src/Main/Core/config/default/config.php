@@ -3,11 +3,12 @@
 return [
     'db' => [
         [
+            'driver' => 'pdo_mysql',
             'host' => 'localhost',
             'user' => 'root',
             'port' => '3306',
-            'pass' => '',
-            'dbName' => 'simple_php',
+            'password' => '',
+            'dbname' => 'simple_php',
             'charset' => 'UTF8',
         ]
     ],

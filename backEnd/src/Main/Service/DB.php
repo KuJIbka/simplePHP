@@ -23,13 +23,13 @@ class DB extends AbstractSingleton
         $isDebug = Config::get()->getParam('debug');
         $dbConf = Config::get()->getParam('db')[0];
         $doctrineParams = [
-            'driver' => 'pdo_mysql',
+            'driver' => $dbConf['driver'],
             'host' => $dbConf['host'],
             'port' => $dbConf['port'],
-            'dbname' => $dbConf['dbName'],
+            'dbname' => $dbConf['dbname'],
             'charset' => $dbConf['charset'],
             'user' => $dbConf['user'],
-            'pass' => $dbConf['pass'],
+            'password' => $dbConf['password'],
         ];
         $doctrinePaths= [
             PATH_ROOT
