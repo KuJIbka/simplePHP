@@ -4,6 +4,7 @@ namespace Main\Core;
 
 use Main\Exception\BaseException;
 use Main\Factory\ResponseFactory;
+use Main\Service\Config;
 use Main\Service\SessionManager;
 use Sabre\HTTP\Response;
 use Sabre\HTTP\Sapi;
@@ -55,7 +56,13 @@ class AppHttp extends App
                     }
                     error_log(' ' . $k . '. ' . $class . $type . $function . '()' . ' ' . $file . ':' . $line);
                 }
-                $response->setBody('Что-то пошло не так, повторите, пожалуйста, операцию');
+                if (Config::get()->getParam('debug')) {
+                    $respString = $e->getMessage();
+                    $respString .= "<br />\n".$e->getFile().'::'.$e->getLine();
+                    $response->setBody($respString);
+                } else {
+                    $response->setBody('Что-то пошло не так, повторите, пожалуйста, операцию');
+                }
             }
             Sapi::sendResponse($response);
         }
