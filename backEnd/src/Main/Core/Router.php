@@ -10,7 +10,7 @@ class Router
     public function __construct($routes)
     {
         $this->routes = $routes;
-        $this->sitePath = isset($_GET['sitePath']) ? '/'.$_GET['sitePath'] : "/";
+        $this->sitePath = isset($_GET['sitePath']) ? '/'.trim($_GET['sitePath'], ' /') : "/";
     }
 
     public function getResponse()
