@@ -15,11 +15,14 @@ class Router
 
     public function getResponse()
     {
-        if (isset($this->routes[$this->sitePath])) {
-            $parseRoute = explode(":", $this->routes[$this->sitePath]);
-            if (is_callable(array($parseRoute[0], $parseRoute[1]))) {
-                $controller = new $parseRoute[0];
-                return $controller->{$parseRoute[1]}();
+        foreach ($this->routes as $routRexExp => $method) {
+            $routRexExp = '/'.str_replace('/', '\/', $routRexExp).'/';
+            if (preg_match($routRexExp, $this->sitePath)) {
+                $parseRoute = explode(":", $this->routes[$this->sitePath]);
+                if (is_callable(array($parseRoute[0], $parseRoute[1]))) {
+                    $controller = new $parseRoute[0];
+                    return $controller->{$parseRoute[1]}();
+                }
             }
         }
         return null;
