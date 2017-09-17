@@ -16,7 +16,7 @@ class Router
     public function getResponse()
     {
         foreach ($this->routes as $routRexExp => $method) {
-            $routRexExp = '/'.str_replace('/', '\/', $routRexExp).'/';
+            $routRexExp = '/^'.str_replace('/', '\/', $routRexExp).'$/';
             if (preg_match($routRexExp, $this->sitePath)) {
                 $parseRoute = explode(":", $method);
                 if (is_callable(array($parseRoute[0], $parseRoute[1]))) {
