@@ -18,7 +18,7 @@ class Router
         foreach ($this->routes as $routRexExp => $method) {
             $routRexExp = '/'.str_replace('/', '\/', $routRexExp).'/';
             if (preg_match($routRexExp, $this->sitePath)) {
-                $parseRoute = explode(":", $this->routes[$this->sitePath]);
+                $parseRoute = explode(":", $method);
                 if (is_callable(array($parseRoute[0], $parseRoute[1]))) {
                     $controller = new $parseRoute[0];
                     return $controller->{$parseRoute[1]}();
