@@ -41,6 +41,8 @@ class AuthController extends BaseController
                         $userLimitRepository->changeLoginCount($userLimit, 1);
                     } else {
                         $userLimitRepository->clearLoginCount($userLimit);
+                        SessionManager::get()->clearSession();
+                        SessionManager::get()->open();
                         SessionManager::get()->setLoggedUser($user);
                         $responseData = new DefaultResponseData(
                             ResponseFactory::RESP_TYPE_SUCCESS,

@@ -18,7 +18,11 @@ class SessionManager extends AbstractSingleton
 
     public function open()
     {
-        session_start();
+        session_start([
+            'cookie_httponly' => true,
+            'use_strict_mode' => true,
+            'cookie_secure' => isset($_SERVER['HTTPS']) ? true : false,
+        ]);
         $this->isOpened = true;
     }
 
@@ -95,7 +99,6 @@ class SessionManager extends AbstractSingleton
         if ($this->isLogged()) {
             $userId = $this->getParam(self::KEY_USER_ID);
             return DB::get()->getUserRepository()->find($userId);
-
         }
         return null;
     }
