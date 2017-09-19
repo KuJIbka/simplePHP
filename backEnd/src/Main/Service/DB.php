@@ -4,6 +4,7 @@ namespace Main\Service;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 use Doctrine\ORM\Tools\Setup;
 use Main\Repository\UserRepository;
 use Main\Utils\AbstractSingleton;
@@ -40,6 +41,7 @@ class DB extends AbstractSingleton
             PATH_ROOT.DIRECTORY_SEPARATOR.'Core'.DIRECTORY_SEPARATOR.'proxies',
             CacheDriver::get()->getCacheDriver()
         );
+        $doctrineConfig->setNamingStrategy(new UnderscoreNamingStrategy());
 
         if ($isDebug) {
             $logger = new \Doctrine\DBAL\Logging\DebugStack();
