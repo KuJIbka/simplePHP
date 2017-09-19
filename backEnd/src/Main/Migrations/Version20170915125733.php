@@ -18,7 +18,7 @@ class Version20170915125733 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql("
             CREATE TABLE `users` (
-                `id` INT(10) UNSIGNED NOT NULL,
+                `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(50) NOT NULL DEFAULT '' COLLATE 'utf8_unicode_ci',
                 `login` VARCHAR(50) NOT NULL DEFAULT '' COLLATE 'utf8_unicode_ci',
                 `password` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8_unicode_ci',
