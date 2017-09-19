@@ -33,7 +33,7 @@ class Version20170915125733 extends AbstractMigration
         $this->addSql("
             CREATE TABLE `user_limit` (
                 `user_id` INT(10) UNSIGNED NOT NULL,
-                `login_try_count` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
+                `login_try_count` SMALLINT(10) UNSIGNED NOT NULL DEFAULT '0',
                 `login_try_count_time` INT(10) UNSIGNED NOT NULL DEFAULT '0',
                 PRIMARY KEY (`user_id`),
                 CONSTRAINT `FK_user_limit_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
