@@ -14,16 +14,16 @@ class User
      */
     private $id;
 
-    /** @Column(type="string", length=30, nullable=false, options={"default": ""} ) */
+    /** @Column(type="string", length=30, nullable=false ) */
     private $name = '';
 
-    /** @Column(type="string", length=20, nullable=false, unique=true, options={"default": ""} ) */
+    /** @Column(type="string", length=20, nullable=false, unique=true ) */
     private $login = '';
 
-    /** @Column(type="string", length=255, nullable=false, options={"default": ""} ) */
+    /** @Column(type="string", length=255, nullable=false ) */
     private $password = '';
 
-    /** @Column(type="decimal", precision=8, scale=2, nullable=false, options={"default": 0} ) */
+    /** @Column(type="decimal", precision=8, scale=2, nullable=false ) */
     private $balance = 0.0;
 
     /** @OneToOne(targetEntity="UserLimit", mappedBy="user") */
