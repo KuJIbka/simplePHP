@@ -9,22 +9,22 @@ class User
 {
     /**
      * @Id
-     * @Column(type="integer", nullable=false, options={"unsigned": true})
+     * @Column(type="integer", nullable=false, options={"unsigned": true} )
      * @GeneratedValue
      */
     private $id;
 
-    /** @Column(type="string", length=30, nullable=false) */
-    private $name;
+    /** @Column(type="string", length=30, nullable=false, options={"default": ""} ) */
+    private $name = '';
 
-    /** @Column(type="string", length=20, nullable=false, unique=true) */
-    private $login;
+    /** @Column(type="string", length=20, nullable=false, unique=true, options={"default": ""} ) */
+    private $login = '';
 
-    /** @Column(type="string", length=255, nullable=false) */
-    private $password;
+    /** @Column(type="string", length=255, nullable=false, options={"default": ""} ) */
+    private $password = '';
 
-    /** @Column(type="decimal", precision=8, scale=2, nullable=false) */
-    private $balance;
+    /** @Column(type="decimal", precision=8, scale=2, nullable=false, options={"default": 0} ) */
+    private $balance = 0.0;
 
     /** @OneToOne(targetEntity="UserLimit", mappedBy="user") */
     private $userLimit;
