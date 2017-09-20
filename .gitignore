@@ -3,3 +3,4 @@
 /backEnd/vendor/
 /backEnd/src/Main/Core/config/prod/*
 /frontEnd/node_modules/
+/backEnd/composer.lock
