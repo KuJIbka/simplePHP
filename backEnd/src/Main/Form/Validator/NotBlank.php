@@ -8,7 +8,7 @@ class NotBlank extends BaseFormValidator
 {
     public function execute()
     {
-        if (is_null($this->value) || $this->value === '') {
+        if (is_null($this->getValue()) || $this->getValue() === '') {
             $this->bindError();
         }
         return $this->getValue();

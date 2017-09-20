@@ -7,4 +7,7 @@ return [
     'L_ERROR_WRONG_ID' => 'Нверный ID',
     'L_ERROR_BAD_COMBINATION_OF_ACCOUNT_DATA' => 'Пользователя с такими данными не существует',
     'L_ERROR_WRONG_DATA' => 'Неверные данные',
+    'L_ERROR_NUMBER_MUST_BE_GREATER_THAN' => 'Число должно быть больше %max%',
+    'L_ERROR_NUMBER_MUST_BE_LOWER_THAN' => 'Число должно быть меньше %max%',
+    'L_OPERATION_SUCCESS' => 'Операция успешно выполнена',
 ];

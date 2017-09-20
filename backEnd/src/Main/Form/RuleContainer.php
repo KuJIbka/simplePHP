@@ -2,6 +2,7 @@
 
 namespace Main\Form;
 
+use Main\Form\Converter\BaseConverter;
 use Main\Form\Validator\BaseFormValidator;
 use Main\Form\Validator\FormValidatorTrait;
 use Main\Form\Validator\ValidatorInterface;
@@ -54,16 +55,46 @@ class RuleContainer extends BaseFormValidator implements ValidatorInterface
     public function execute()
     {
         $filteredValue = $this->getValue();
-        foreach ($this->getRules() as $rule) {
-            $rule->setValue($filteredValue);
-            if ($rule instanceof ValidatorInterface) {
-                $rule->setCustomError($this->getCustomError());
-            }
+        if (is_array($filteredValue)) {
+            foreach ($filteredValue as $k => $v) {
+                $wasError = false;
+                foreach ($this->getRules() as $rule) {
+                    $rule->setValue($v);
+                    if ($rule instanceof ValidatorInterface) {
+                        $rule->setCustomError($this->getCustomError());
+                    }
 
-            $filteredValue = $rule->execute();
-            if ($rule instanceof ValidatorInterface && !$rule->isValid()) {
-                $this->setError($rule->getError());
-                break;
+                    $newVal = $rule->execute();
+                    if ($rule instanceof BaseConverter) {
+                        $v = $newVal;
+                    }
+                    if ($rule instanceof ValidatorInterface && !$rule->isValid()) {
+                        $this->setError($rule->getError());
+                        $wasError = true;
+                        break;
+                    }
+                }
+                if ($wasError) {
+                    break;
+                } else {
+                    $filteredValue[$k] = $v;
+                }
+            }
+        } else {
+            foreach ($this->getRules() as $rule) {
+                $rule->setValue($filteredValue);
+                if ($rule instanceof ValidatorInterface) {
+                    $rule->setCustomError($this->getCustomError());
+                }
+
+                $newVal = $rule->execute();
+                if ($rule instanceof BaseConverter) {
+                    $filteredValue = $newVal;
+                }
+                if ($rule instanceof ValidatorInterface && !$rule->isValid()) {
+                    $this->setError($rule->getError());
+                    break;
+                }
             }
         }
         return $filteredValue;

@@ -2,8 +2,8 @@
 
 namespace Main\Form\Data;
 
-use Form\DefaultsRuleSets;
 use Main\Form\AbstractFormData;
+use Main\Form\DefaultsRuleSets;
 use Main\Form\RuleContainer;
 
 class IdFormData extends AbstractFormData

@@ -19,5 +19,6 @@ return [
     'loginCountMax' => 3,
     'loginCountMaxTime' => 3600,
     'debug' => true,
+    'language_default' => \Main\Service\TranslationsService::LANG_RU,
     'loginSecretKey' => 'K1ECMjIa1Bs0J5h3',
 ];
