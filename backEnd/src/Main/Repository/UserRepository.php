@@ -53,7 +53,7 @@ class UserRepository extends EntityRepository
             ->setFirstResult($start)
             ->setMaxResults($count)
             ->getQuery();
-        return $q->getArrayResult();
+        return $q->getResult();
     }
 
     /**
