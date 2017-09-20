@@ -62,7 +62,7 @@ class User
         return $this;
     }
 
-    public function getUserLimit(): UserLimit
+    public function getUserLimit(): ?UserLimit
     {
         return $this->userLimit;
     }

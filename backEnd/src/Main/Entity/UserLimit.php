@@ -21,7 +21,7 @@ class UserLimit
     /** @Column( name="login_try_count_time", type="integer", nullable=false, options={"unsigned": true} ) */
     private $loginTryCountTime = 0;
 
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
