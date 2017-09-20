@@ -2,6 +2,7 @@
 
 namespace Main\Repository;
 
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Main\Exception\UserNotFound;
@@ -42,7 +43,7 @@ class UserRepository extends EntityRepository
      * @param UserFilter $filter
      * @return User[]
      */
-    public function findByFilter(UserFilter $filter, $start = 0, $count = 1)
+    public function findByFilter(UserFilter $filter, $start, $count)
     {
         if ($filter->isEmpty()) {
             return [];
@@ -53,6 +54,9 @@ class UserRepository extends EntityRepository
             ->setFirstResult($start)
             ->setMaxResults($count)
             ->getQuery();
+        if ($filter->isForUpdate()) {
+            $q->setLockMode(LockMode::PESSIMISTIC_WRITE);
+        }
         return $q->getResult();
     }
 
