@@ -2,6 +2,8 @@
 
 namespace Main\Core;
 
+use Main\Factory\ResponseFactory;
+
 class Router
 {
     public $routes;
@@ -25,6 +27,6 @@ class Router
                 }
             }
         }
-        return null;
+        return ResponseFactory::getSimpleResponse('NOT FOUND', 404);
     }
 }
