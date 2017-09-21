@@ -1,5 +1,7 @@
 <?php
 
+use Main\Service\CacheDriver;
+
 return [
     'db' => [
         [
@@ -21,4 +23,11 @@ return [
     'debug' => true,
     'language_default' => \Main\Service\TranslationsService::LANG_RU,
     'loginSecretKey' => 'K1ECMjIa1Bs0J5h3',
+
+    'cache_driver' => CacheDriver::DRIVER_REDIS,
+
+    'redis_host' => 'localhost',
+    'redis_port' => 6379,
+    'redis_timeout' => null,
+    'redis_retryInterval' => 0,
 ];
