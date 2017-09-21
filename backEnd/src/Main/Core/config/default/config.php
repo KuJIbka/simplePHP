@@ -1,6 +1,7 @@
 <?php
 
 use Main\Service\CacheDriver;
+use Main\Service\SessionManager;
 
 return [
     'db' => [
@@ -30,4 +31,7 @@ return [
     'redis_port' => 6379,
     'redis_timeout' => null,
     'redis_retryInterval' => 0,
+
+    'session_save_handler' => SessionManager::SAVE_HANDLER_FILES,
+    'session_save_path' => '',
 ];

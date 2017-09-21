@@ -11,10 +11,19 @@ use Main\Utils\AbstractSingleton;
  */
 class SessionManager extends AbstractSingleton
 {
+    const SAVE_HANDLER_FILES = 'files';
+    const SAVE_HANDLER_REDIS = 'redis';
+
     const KEY_USER_ID = 'user_id';
 
     protected static $inst;
     protected $isOpened = false;
+
+    public function init()
+    {
+        ini_set('session.save_handler', Config::get()->getParam('session_save_handler'));
+        ini_set('session.save_path', Config::get()->getParam('session_save_path'));
+    }
 
     public function open()
     {
