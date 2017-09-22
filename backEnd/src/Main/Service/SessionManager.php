@@ -2,6 +2,7 @@
 
 namespace Main\Service;
 
+use Main\Exception\BaseException;
 use Main\Exception\CommonFatalError;
 use Main\Entity\User;
 use Main\Utils\AbstractSingleton;
@@ -15,13 +16,23 @@ class SessionManager extends AbstractSingleton
     const SAVE_HANDLER_REDIS = 'redis';
 
     const KEY_USER_ID = 'user_id';
+    const KEY_REDMINE_TOKEN = 'redmine_token';
 
     protected static $inst;
     protected $isOpened = false;
+    protected $usedDriver = '';
 
     public function init()
     {
-        ini_set('session.save_handler', Config::get()->getParam('session_save_handler'));
+        $this->usedDriver = Config::get()->getParam('session_save_handler');
+        if (!in_array($this->usedDriver, [
+            self::SAVE_HANDLER_FILES,
+            self::SAVE_HANDLER_REDIS
+        ])) {
+            throw new BaseException('Hander as '.$this->usedDriver.' does not supported');
+        }
+
+        ini_set('session.save_handler', $this->usedDriver);
         ini_set('session.save_path', Config::get()->getParam('session_save_path'));
     }
 
@@ -108,6 +119,7 @@ class SessionManager extends AbstractSingleton
         if ($this->isLogged()) {
             $userId = $this->getParam(self::KEY_USER_ID);
             return DB::get()->getUserRepository()->find($userId);
+
         }
         return null;
     }
@@ -125,5 +137,17 @@ class SessionManager extends AbstractSingleton
         session_regenerate_id(true);
         session_destroy();
         $this->close();
+    }
+
+    public function regenerateId($delete_old_session = false)
+    {
+        $wasOpen = $this->isOpened;
+        if (!$wasOpen) {
+            $this->open();
+        }
+        session_regenerate_id($delete_old_session);
+        if (!$wasOpen) {
+            $this->close();
+        }
     }
 }
