@@ -39,7 +39,6 @@ class CacheDriver extends AbstractSingleton
 
             default:
                 $this->cacheDriver = new ArrayCache();
-
         }
     }
 
