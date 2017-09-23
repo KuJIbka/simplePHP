@@ -27,6 +27,7 @@ class MainController extends BaseController
     public function testCache()
     {
         $cacheService = CacheDriver::get();
+        $cacheService->getCacheDriver()->flushAll();
         $key1 = 'key1';
         $value1 = 'value1';
         $cacheService->getCacheDriver()->save($key1, $value1);
