@@ -95,6 +95,8 @@ class CacheDriver extends AbstractSingleton
             $cachedTags = $result['t'];
             if (!$this->checkTagsIsExpired($cachedTags)) {
                 $result = $cachedValue;
+            } else {
+                $result = null;
             }
         }
         return $result;
