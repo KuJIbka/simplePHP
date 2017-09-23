@@ -41,6 +41,7 @@ class MainController extends BaseController
         $value3 = 'value3';
         $cacheService->saveWithTags($key2, $value2, [ $tag1 ]);
         var_dump($cacheService->getCacheDriver()->fetch($key2));
+        var_dump($cacheService->getCacheDriver()->fetch('tag_'.$tag1));
         var_dump($cacheService->fetchTaggedOrUpdate($key2, [ $tag1 ], function () use ($value2) {
             return $value2;
         }));
