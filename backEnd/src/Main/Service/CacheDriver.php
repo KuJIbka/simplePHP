@@ -102,9 +102,10 @@ class CacheDriver extends AbstractSingleton
     public function checkTagsIsExpired(array $tags): bool
     {
         $currentTagsTimes = $this->getCacheDriver()->fetchMultiple(array_keys($tags));
+        var_dump($currentTagsTimes);
         foreach ($tags as $tagName => $tagTime) {
             $fromCache = isset($currentTagsTimes[$tagName]) ? $currentTagsTimes[$tagName] : null;
-            if (!$fromCache || $fromCache > $tagTime) {
+            if (is_null($fromCache) || $fromCache > $tagTime) {
                 return true;
             }
         }
