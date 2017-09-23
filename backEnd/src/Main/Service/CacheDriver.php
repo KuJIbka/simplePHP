@@ -58,7 +58,7 @@ class CacheDriver extends AbstractSingleton
             't' => [],
         ];
         foreach ($tags as $tag) {
-            $data['t'][] = [ $tag => $_SERVER['REQUEST_TIME'] ];
+            $data['t'][] = [ $this->getTagKey($tag) => $_SERVER['REQUEST_TIME'] ];
         }
         return $this->getCacheDriver()->save($key, $data, $expire);
     }
