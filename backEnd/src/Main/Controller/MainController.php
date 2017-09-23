@@ -51,6 +51,7 @@ class MainController extends BaseController
             var_dump('from_data_source');
             return $value3;
         }));
+        var_dump($cacheService->getCacheDriver()->fetch($key2));
         var_dump($cacheService->fetchTagged($key2));
         echo "<hr />";
     }
