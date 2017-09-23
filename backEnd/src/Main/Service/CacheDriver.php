@@ -70,7 +70,7 @@ class CacheDriver extends AbstractSingleton
         }
     }
 
-    public function fetchTaggedOrUpdate($key, array $tags, $notFoundFunc, $expire = 0): mixed
+    public function fetchTaggedOrUpdate($key, array $tags, $notFoundFunc, $expire = 0)
     {
         $result = $this->fetchTagged($key);
         if ($result === false) {
@@ -84,7 +84,7 @@ class CacheDriver extends AbstractSingleton
         return $result;
     }
 
-    public function fetchTagged($key): mixed
+    public function fetchTagged($key)
     {
         $result = $this->getCacheDriver()->fetch($key);
         if ($result !== false) {
