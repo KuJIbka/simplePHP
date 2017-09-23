@@ -67,9 +67,7 @@ class CacheDriver extends AbstractSingleton
     {
         $tagsTime = $_SERVER['REQUEST_TIME'];
         foreach ($tags as $tag) {
-            if ($tag !== null) {
-                $this->getCacheDriver()->save($this->getTagKey($tag), $tagsTime, 0);
-            }
+            $this->getCacheDriver()->save($this->getTagKey($tag), $tagsTime, 0);
         }
     }
 
@@ -96,7 +94,7 @@ class CacheDriver extends AbstractSingleton
             if (!$this->checkTagsIsExpired($cachedTags)) {
                 $result = $cachedValue;
             } else {
-                $result = null;
+                $result = false;
             }
         }
         return $result;
@@ -107,7 +105,7 @@ class CacheDriver extends AbstractSingleton
         $currentTagsTimes = $this->getCacheDriver()->fetchMultiple(array_keys($tags));
         foreach ($tags as $tagName => $tagTime) {
             $fromCache = isset($currentTagsTimes[$tagName]) ? $currentTagsTimes[$tagName] : null;
-            if (!$fromCache || $fromCache !== $tagTime) {
+            if (!$fromCache || $fromCache > $tagTime) {
                 return true;
             }
         }
