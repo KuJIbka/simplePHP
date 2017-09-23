@@ -45,7 +45,7 @@ class MainController extends BaseController
         var_dump($cacheService->getCacheDriver()->fetch($key2));
         var_dump($cacheService->getCacheDriver()->fetch('tag_'.$tag1));
         echo "<hr />";
-        $_SERVER['REQUEST_TIME'] ++;
+        $_SERVER['REQUEST_TIME']++;
         $cacheService->setTagsTimestamp([ $tag1 ]);
         var_dump($cacheService->fetchTaggedOrUpdate($key2, [ $tag1 ], function () use ($value3) {
             var_dump('from_data_source');
@@ -53,10 +53,6 @@ class MainController extends BaseController
         }));
         var_dump($cacheService->getCacheDriver()->fetch($key2));
         var_dump($cacheService->fetchTagged($key2));
-        /** @var \Redis $r */
-        $r = $cacheService->getCacheDriver()->getRedis();
-        $i = 0;
-        var_dump($r->scan($i, 'tag_'));
         echo "<hr />";
     }
 }
