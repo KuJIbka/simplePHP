@@ -89,6 +89,7 @@ class CacheDriver extends AbstractSingleton
             $this->lock($key);
             $result = call_user_func($notFoundFunc);
             $this->saveWithTags($key, $result, $tags, $expire);
+            $this->unlock($key);
         }
         return $result;
     }
