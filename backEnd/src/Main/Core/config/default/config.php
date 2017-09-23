@@ -4,17 +4,14 @@ use Main\Service\CacheDriver;
 use Main\Service\SessionManager;
 
 return [
-    'db' => [
-        [
-            'driver' => 'pdo_mysql',
-            'host' => 'localhost',
-            'user' => 'root',
-            'port' => '3306',
-            'password' => '',
-            'dbname' => 'simple_php',
-            'charset' => 'UTF8',
-        ]
-    ],
+    'db_driver' => 'pdo_mysql',
+    'db_host' => 'localhost',
+    'db_port' => 3306,
+    'db_dbname' => 'simple_php',
+    'db_charset' => 'UTF8',
+    'db_user' => 'root',
+    'db_password' => '',
+
     'migrations' => [
         'dir' => PATH_ROOT.DIRECTORY_SEPARATOR.'Migrations',
         'namespace' => 'Main\\Migrations',
@@ -26,6 +23,9 @@ return [
     'loginSecretKey' => 'K1ECMjIa1Bs0J5h3',
 
     'cache_driver' => CacheDriver::DRIVER_REDIS,
+    'cache_namespace' => 'main_app',
+    'cache_lock_try_timeout' => 10000,
+    'cache_lock_expire' => 600,
 
     'redis_host' => 'localhost',
     'redis_port' => 6379,

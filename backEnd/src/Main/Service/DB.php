@@ -22,15 +22,14 @@ class DB extends AbstractSingleton
     protected function init()
     {
         $isDebug = Config::get()->getParam('debug');
-        $dbConf = Config::get()->getParam('db')[0];
         $doctrineParams = [
-            'driver' => $dbConf['driver'],
-            'host' => $dbConf['host'],
-            'port' => $dbConf['port'],
-            'dbname' => $dbConf['dbname'],
-            'charset' => $dbConf['charset'],
-            'user' => $dbConf['user'],
-            'password' => $dbConf['password'],
+            'driver' => Config::get()->getParam('db_driver'),
+            'host' => Config::get()->getParam('db_host'),
+            'port' => Config::get()->getParam('db_port'),
+            'dbname' => Config::get()->getParam('db_dbname'),
+            'charset' => Config::get()->getParam('db_charset'),
+            'user' => Config::get()->getParam('db_user'),
+            'password' => Config::get()->getParam('db_password'),
         ];
         $doctrinePaths= [
             PATH_ROOT

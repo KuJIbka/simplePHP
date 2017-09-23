@@ -88,12 +88,13 @@ class SessionManager extends AbstractSingleton
 
     public function sessionLock($lockName)
     {
-        $timeout = 15;
+        $timeout = 15000;
         $lockSessionName = 'lock_' . $lockName;
         $issetLock = $this->issetParam($lockSessionName);
         while ($issetLock && $timeout >= 0) {
-            sleep(1);
-            $timeout--;
+            $usleepVal = rand(100, 300);
+            usleep($usleepVal);
+            $timeout -= $usleepVal;
         }
         if ($issetLock && $timeout < 0) {
             throw new CommonFatalError();
