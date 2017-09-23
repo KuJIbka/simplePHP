@@ -88,7 +88,7 @@ class CacheDriver extends AbstractSingleton
     public function fetchTagged($key)
     {
         $result = $this->getCacheDriver()->fetch($key);
-        if ($result === false) {
+        if ($result !== false) {
             $cachedValue = $result['v'];
             $cachedTags = $result['t'];
             if (!$this->checkTagsIsExpired($cachedTags)) {
