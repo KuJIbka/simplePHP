@@ -65,9 +65,8 @@ class CacheDriver extends AbstractSingleton
 
     public function setTagsTimestamp(array $tags)
     {
-        $tagsTime = $_SERVER['REQUEST_TIME'];
         foreach ($tags as $tag) {
-            $this->getCacheDriver()->save($this->getTagKey($tag), $tagsTime, 0);
+            $this->getCacheDriver()->save($this->getTagKey($tag), $_SERVER['REQUEST_TIME'], 0);
         }
     }
 

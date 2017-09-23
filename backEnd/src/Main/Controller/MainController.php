@@ -53,6 +53,10 @@ class MainController extends BaseController
         }));
         var_dump($cacheService->getCacheDriver()->fetch($key2));
         var_dump($cacheService->fetchTagged($key2));
+        /** @var \Redis $r */
+        $r = $cacheService->getCacheDriver()->getRedis();
+        $i = 0;
+        var_dump($r->scan($i, 'tag_'));
         echo "<hr />";
     }
 }
