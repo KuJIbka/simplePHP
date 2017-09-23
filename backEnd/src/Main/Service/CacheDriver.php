@@ -51,7 +51,7 @@ class CacheDriver extends AbstractSingleton
         return $this->cacheDriver;
     }
 
-    public function saveWithTags($key, $value, array $tags, $expire = 0)
+    public function saveWithTags($key, $value, array $tags, $expire = 0): bool
     {
         $data = [
             'v' => $value,
@@ -70,7 +70,7 @@ class CacheDriver extends AbstractSingleton
         }
     }
 
-    public function fetchTaggedOrUpdate($key, array $tags, $notFoundFunc, $expire = 0)
+    public function fetchTaggedOrUpdate($key, array $tags, $notFoundFunc, $expire = 0): mixed
     {
         $result = $this->fetchTagged($key);
         if ($result === false) {
@@ -84,7 +84,7 @@ class CacheDriver extends AbstractSingleton
         return $result;
     }
 
-    public function fetchTagged($key)
+    public function fetchTagged($key): mixed
     {
         $result = $this->getCacheDriver()->fetch($key);
         if ($result !== false) {
@@ -131,17 +131,17 @@ class CacheDriver extends AbstractSingleton
         }
     }
 
-    public function unlock($key)
+    public function unlock($key): bool
     {
         return $this->getCacheDriver()->delete($this->getLockKey($key));
     }
 
-    public function getTagKey($key)
+    public function getTagKey($key): string
     {
         return 'tag_'.$key;
     }
 
-    public function getLockKey($key)
+    public function getLockKey($key): string
     {
         return 'lock_'.$key;
     }
