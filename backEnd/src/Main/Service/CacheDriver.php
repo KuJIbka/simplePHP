@@ -119,6 +119,7 @@ class CacheDriver extends AbstractSingleton
                 continue;
             }
             $result = $this->getCacheDriver()->save($lockedKey, 1, Config::get()->getParam('cache_lock_expire'));
+            break;
         }
         if (!$result) {
             throw new \Exception("Cache can't' lock key for timeout");
