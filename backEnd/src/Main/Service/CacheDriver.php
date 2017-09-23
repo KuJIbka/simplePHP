@@ -109,7 +109,7 @@ class CacheDriver extends AbstractSingleton
     public function lock($key)
     {
         $lockedKey = $this->getLockKey($key);
-        $timeout = Config::get()->getParam('cache_lock_timeout');
+        $timeout = Config::get()->getParam('cache_lock_try_timeout');
         $result = false;
         while ($timeout > 0) {
             if ($this->getCacheDriver()->contains($lockedKey)) {
