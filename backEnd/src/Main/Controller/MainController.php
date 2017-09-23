@@ -39,6 +39,7 @@ class MainController extends BaseController
         $key2 = 'key2';
         $value2 = 'value2';
         $value3 = 'value3';
+        $cacheService->setTagsTimestamp([ $tag1 ]);
         var_dump($cacheService->fetchTaggedOrUpdate($key2, [ $tag1 ], function () use ($value2) {
             return $value2;
         }));
