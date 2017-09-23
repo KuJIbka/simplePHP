@@ -45,6 +45,9 @@ class MainController extends BaseController
         }));
         var_dump($cacheService->getCacheDriver()->fetch($key2));
         var_dump($cacheService->getCacheDriver()->fetch('tag_'.$tag1));
+        var_dump($cacheService->fetchTaggedOrUpdate($key2, [ $tag1 ], function () use ($value3) {
+            return $value3;
+        }));
         echo "<hr />";
         $_SERVER['REQUEST_TIME']++;
         $cacheService->setTagsTimestamp([ $tag1 ]);
