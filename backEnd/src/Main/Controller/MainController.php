@@ -28,6 +28,7 @@ class MainController extends BaseController
     {
         $cacheService = CacheDriver::get();
         $cacheService->getCacheDriver()->flushAll();
+        var_dump($cacheService->getCacheDriver()->fetch('not_existed'));
         $key1 = 'key1';
         $value1 = 'value1';
         $cacheService->getCacheDriver()->save($key1, $value1);
@@ -40,13 +41,14 @@ class MainController extends BaseController
         $value3 = 'value3';
         $cacheService->saveWithTags($key2, $value2, [ $tag1 ]);
         var_dump($cacheService->getCacheDriver()->fetch($key2));
-        var_dump($cacheService->fetchTaggedOrReset($key2, [ $tag1 ], function () use ($value2) {
+        var_dump($cacheService->fetchTaggedOrUpdate($key2, [ $tag1 ], function () use ($value2) {
             return $value2;
         }));
         echo "<hr />";
         $_SERVER['REQUEST_TIME'] ++;
         $cacheService->setTagsTimestamp([ $tag1 ]);
-        var_dump($cacheService->fetchTaggedOrReset($key2, [ $tag1 ], function () use ($value3) {
+        var_dump($cacheService->fetchTaggedOrUpdate($key2, [ $tag1 ], function () use ($value3) {
+            var_dump('from_data_source');
             return $value3;
         }));
         var_dump($cacheService->fetchTagged($key2));

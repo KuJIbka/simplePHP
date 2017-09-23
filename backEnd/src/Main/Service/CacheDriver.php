@@ -73,10 +73,10 @@ class CacheDriver extends AbstractSingleton
         }
     }
 
-    public function fetchTaggedOrReset($key, array $tags, $notFoundFunc, $expire = 0)
+    public function fetchTaggedOrUpdate($key, array $tags, $notFoundFunc, $expire = 0)
     {
         $result = $this->fetchTagged($key);
-        if (!$result) {
+        if (is_null($result)) {
             if (is_callable($notFoundFunc)) {
                 $this->lock($key);
                 $result = call_user_func($notFoundFunc);
@@ -90,7 +90,7 @@ class CacheDriver extends AbstractSingleton
     public function fetchTagged($key)
     {
         $result = $this->getCacheDriver()->fetch($key);
-        if ($result) {
+        if (is_null($result)) {
             $cachedValue = $result['v'];
             $cachedTags = $result['t'];
             if (!$this->checkTagsIsExpired($cachedTags)) {
