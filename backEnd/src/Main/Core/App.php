@@ -21,6 +21,7 @@ abstract class App
         if (!isset($_SERVER['REQUEST_TIME'])) {
             $_SERVER['REQUEST_TIME'] = time();
         }
+        $_SERVER['REQUEST_TIME_MICRO'] = microtime(true);
     }
 
     abstract public function run();

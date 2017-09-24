@@ -58,7 +58,7 @@ class CacheDriver extends AbstractSingleton
             't' => [],
         ];
         foreach ($tags as $tag) {
-            $data['t'][$this->getTagKey($tag)] = $_SERVER['REQUEST_TIME'];
+            $data['t'][$this->getTagKey($tag)] = $_SERVER['REQUEST_TIME_MICRO'];
         }
         return $this->getCacheDriver()->save($key, $data, $expire);
     }
@@ -66,7 +66,7 @@ class CacheDriver extends AbstractSingleton
     public function setTagsTimestamp(array $tags)
     {
         foreach ($tags as $tag) {
-            $this->getCacheDriver()->save($this->getTagKey($tag), $_SERVER['REQUEST_TIME'], 0);
+            $this->getCacheDriver()->save($this->getTagKey($tag), $_SERVER['REQUEST_TIME_MICRO'], 0);
         }
     }
 
@@ -75,10 +75,12 @@ class CacheDriver extends AbstractSingleton
         $result = $this->fetchTagged($key);
         if ($result === false) {
             if (is_callable($notFoundFunc)) {
-                $this->lock($key);
+                $locked = $this->lock($key);
                 $result = call_user_func($notFoundFunc);
-                $this->saveWithTags($key, $result, $tags, $expire);
-                $this->unlock($key);
+                if ($locked) {
+                    $this->saveWithTags($key, $result, $tags, $expire);
+                    $this->unlock($key);
+                }
             }
         }
         return $result;
@@ -126,9 +128,11 @@ class CacheDriver extends AbstractSingleton
             $result = $this->getCacheDriver()->save($lockedKey, 1, Config::get()->getParam('cache_lock_expire'));
             break;
         }
+
         if (!$result) {
-            throw new \Exception("Cache can't' lock key for timeout");
+            error_log("Cache can't' lock key for timeout");
         }
+        return $result;
     }
 
     public function unlock($key): bool
