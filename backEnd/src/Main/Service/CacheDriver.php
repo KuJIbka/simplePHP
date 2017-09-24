@@ -106,7 +106,7 @@ class CacheDriver extends AbstractSingleton
         $currentTagsTimes = $this->getCacheDriver()->fetchMultiple(array_keys($tags));
         foreach ($tags as $tagName => $tagTime) {
             $fromCache = isset($currentTagsTimes[$tagName]) ? $currentTagsTimes[$tagName] : null;
-            if (is_null($fromCache) || $fromCache > $tagTime) {
+            if (is_null($fromCache) || $fromCache === false || $fromCache > $tagTime) {
                 return true;
             }
         }
