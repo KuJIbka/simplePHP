@@ -9,6 +9,7 @@
 		"sabre/http": "4.2.*",
         "defuse/php-encryption": "2.0.*",
 		"symfony/translation": "3.3.*",
+		"symfony/twig-bridge": "3.3.*",
         "symfony/yaml": "3.3.*",
         "symfony/console": "3.3.*"
 	}

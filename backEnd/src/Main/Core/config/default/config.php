@@ -22,7 +22,7 @@ return [
     'language_default' => \Main\Service\TranslationsService::LANG_RU,
     'loginSecretKey' => 'K1ECMjIa1Bs0J5h3',
 
-    'cache_driver' => CacheDriver::DRIVER_REDIS,
+    'cache_driver' => CacheDriver::DRIVER_ARRAY,
     'cache_namespace' => 'main_app',
     'cache_lock_try_timeout' => 10000,
     'cache_lock_expire' => 600,
