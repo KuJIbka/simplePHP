@@ -24,11 +24,12 @@ abstract class ResponseFactory
         return new Response($statusCode, $headers, $body);
     }
 
-    public static function getCommonSuccessResponse(array $data = [])
+    public static function getCommonSuccessResponse(array $data = [], $text = null)
     {
+        $textString = !is_null($text) ? $text : 'L_OPERATION_SUCCESS';
         $body = [
             'type' => self::RESP_TYPE_SUCCESS,
-            'text' => TranslationsService::get()->getTranslator()->trans('L_OPERATION_SUCCESS'),
+            'text' => TranslationsService::get()->getTranslator()->trans($textString),
             'data' => $data,
         ];
         return self::getJsonResponse($body);
