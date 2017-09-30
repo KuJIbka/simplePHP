@@ -5,5 +5,6 @@ return [
     '/auth/login' => "Main\Controller\AuthController:login",
     '/auth/logout' => "Main\Controller\AuthController:logout",
     '/in' => 'Main\Controller\MainController:in',
-    '/testCache' => 'Main\Controller\MainController:testCache',
+
+    '/testCache' => 'Main\Controller\TestController:testCache',
 ];

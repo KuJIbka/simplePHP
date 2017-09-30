@@ -4,7 +4,6 @@ namespace Main\Form\Data;
 
 use Main\Form\AbstractFormData;
 use Main\Form\DefaultsRuleSets;
-use Main\Form\RuleContainer;
 
 class IdFormData extends AbstractFormData
 {
@@ -19,9 +18,7 @@ class IdFormData extends AbstractFormData
         return $this->id;
     }
 
-    /**
-     * @return RuleContainer[]
-     */
+    /** {@inheritdoc} */
     protected function getRules(): array
     {
         return [

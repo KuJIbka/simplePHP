@@ -12,9 +12,7 @@ class LoginFormData extends AbstractFormData
     protected $login;
     protected $password;
 
-    /**
-     * @return RuleContainer[]
-     */
+    /** {@inheritdoc} */
     protected function getRules(): array
     {
         return [

@@ -2,6 +2,7 @@
 
 namespace Main\Form;
 
+use Main\Exception\BaseFormDataException;
 use Main\Form\Validator\FormValidatorTrait;
 use Main\Form\Validator\ValidatorInterface;
 use Main\Service\TranslationsService;
@@ -73,6 +74,13 @@ abstract class AbstractFormData implements DataManager, ValidatorInterface
     public function isValid(): bool
     {
         return empty($this->errors);
+    }
+
+    public function isValidWithThrowException()
+    {
+        if (!$this->isValid()) {
+            throw (new BaseFormDataException())->setFormDataErrors($this->getTranslatedErrorsData());
+        }
     }
 
     /**

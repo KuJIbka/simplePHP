@@ -3,9 +3,11 @@
 namespace Main\Core;
 
 use Main\Exception\BaseException;
+use Main\Exception\CommonFatalError;
 use Main\Factory\ResponseFactory;
 use Main\Service\Config;
 use Main\Service\SessionManager;
+use Main\Service\TranslationsService;
 use Sabre\HTTP\Response;
 use Sabre\HTTP\Sapi;
 
@@ -61,7 +63,11 @@ class AppHttp extends App
                     $respString .= "<br />\n".$e->getFile().'::'.$e->getLine();
                     $response->setBody($respString);
                 } else {
-                    $response->setBody('Что-то пошло не так, повторите, пожалуйста, операцию');
+                    $commonFatalError = new CommonFatalError();
+                    $commonFatalErrorText = TranslationsService::get()
+                        ->getTranslator()
+                        ->trans($commonFatalError->getMessage());
+                    $response->setBody($commonFatalErrorText);
                 }
             }
             Sapi::sendResponse($response);

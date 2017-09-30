@@ -8,7 +8,7 @@ class CommonFatalError extends BaseException
 {
     public function __construct($code = 0, Throwable $previous = null)
     {
-        $message = 'Что-то пошло не так, попробуй повторить операцию';
+        $message = 'L_COMMON_FATAL_ERROR';
         parent::__construct($message, $code, $previous);
     }
 }
