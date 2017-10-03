@@ -21,6 +21,7 @@ class AppConsole extends App
         parent::__construct();
         $this->symfonyApp = new Application();
         $em = DB::get()->getEm();
+        $entityManagerHelper = new EntityManagerHelper($em);
         $dbConnection = $em->getConnection();
         $migrationConf = new Configuration($dbConnection);
         $migrationConfig = Config::get()->getParam('migrations');
@@ -28,10 +29,11 @@ class AppConsole extends App
         $migrationConf->setMigrationsNamespace($migrationConfig['namespace']);
         $configurationHelper = new ConfigurationHelper($dbConnection, $migrationConf);
         $helperSet = new HelperSet([
+            'em' => $entityManagerHelper,
             'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($dbConnection),
             'dialog' => new \Symfony\Component\Console\Helper\QuestionHelper(),
             'configuration' => $configurationHelper,
-            'entityManager' => new EntityManagerHelper($em),
+            'entityManager' => $entityManagerHelper,
         ]);
         $this->symfonyApp->setHelperSet($helperSet);
 
@@ -43,6 +45,10 @@ class AppConsole extends App
             new \Doctrine\DBAL\Migrations\Tools\Console\Command\MigrateCommand(),
             new \Doctrine\DBAL\Migrations\Tools\Console\Command\StatusCommand(),
             new \Doctrine\DBAL\Migrations\Tools\Console\Command\VersionCommand(),
+
+            new \Doctrine\ORM\Tools\Console\Command\ClearCache\QueryCommand(),
+            new \Doctrine\ORM\Tools\Console\Command\ClearCache\MetadataCommand(),
+            new \Doctrine\ORM\Tools\Console\Command\ClearCache\ResultCommand(),
         ]);
     }
 
