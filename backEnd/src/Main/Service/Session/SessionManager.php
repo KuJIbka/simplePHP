@@ -40,11 +40,11 @@ class SessionManager extends AbstractSingleton
 
             case self::SAVE_HANDLER_REDIS:
                 $redis = new \Redis();
-                $parsedSavePath = explode('//', $sessionLifeTime);
+                $parsedSavePath = explode('//', $sessionSavePath);
                 if (!isset($parsedSavePath[1])) {
                     throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
                 }
-                $parsedSavePath = explode(':', $sessionLifeTime[1]);
+                $parsedSavePath = explode(':', $sessionSavePath[1]);
                 if (!isset($parsedSavePath[1])) {
                     throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
                 }
