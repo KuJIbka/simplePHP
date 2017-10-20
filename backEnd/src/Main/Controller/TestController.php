@@ -45,6 +45,7 @@ class TestController
         echo "Settings lock = ... ";
         SessionManager::get()->sessionLock('lock1');
         sleep(5);
+        SessionManager::get()->sessionUnlock('lock1');
         echo "OK <br />\n";
         ob_end_flush();
     }
