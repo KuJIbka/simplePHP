@@ -121,7 +121,7 @@ class SessionManager extends AbstractSingleton
 
     public function sessionLock($lockName)
     {
-        $timeout = 15000;
+        $timeout = 15000000;
         $lockSessionName = 'lock_' . $lockName;
         $this->refreshSessionData();
         $issetLock = $this->issetParam($lockSessionName);
