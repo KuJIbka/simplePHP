@@ -19,7 +19,7 @@ class TestController
             SessionManager::get()->open();
             SessionManager::get()->regenerateId();
         }
-        echo "Session hander = ".Config::get()->getParam('session_save_handler')."<br />\n";
+        echo "Session handler = ".Config::get()->getParam('session_save_handler')."<br />\n";
         echo "Session_id = ".session_id()."<br />\n";
         SessionManager::get()->setParam('sessionParam', 'sessionValue');
         if (SessionManager::get()->getParam('sessionParam') === 'sessionValue') {
