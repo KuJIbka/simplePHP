@@ -12,15 +12,21 @@ class TestController
     public function testSession()
     {
         echo "Start check sessions... <br />\n";
-        echo "Session status = ".session_status()."<br />\n";
-        echo "Session_id = ".session_id()."<br />\n";
-        echo "Session status = ".session_status()."<br />\n";
-        echo "Regenerating...";
-        SessionManager::get()->regenerateId(true);
+        $needRegenerate = isset($_GET['regenerate']);
+        if ($needRegenerate) {
+            SessionManager::get()->open();
+            SessionManager::get()->regenerateId();
+        }
         echo "Session_id = ".session_id()."<br />\n";
         SessionManager::get()->setParam('sessionParam', 'sessionValue');
         if (SessionManager::get()->getParam('sessionParam') === 'sessionValue') {
             echo "Sessions - OK<br />\n";
+            echo "
+                <form>
+                    <input type='hidden' name='regenerate' value='1' />
+                    <button>Regenerate</button>
+                </form>
+            ";
             SessionManager::get()->destroySession();
         } else {
             echo "Sessions - ERROR<br />\n";
