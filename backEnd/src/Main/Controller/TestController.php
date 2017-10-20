@@ -11,6 +11,7 @@ class TestController
 {
     public function testSession()
     {
+        ob_start();
         echo "Start check sessions... <br />\n";
         $needRegenerate = isset($_GET['regenerate']);
         if ($needRegenerate) {
@@ -31,6 +32,7 @@ class TestController
         } else {
             echo "Sessions - ERROR<br />\n";
         }
+        ob_end_flush();
     }
 
     public function testDB()
