@@ -24,7 +24,7 @@ class Config
         if (is_dir($path)) {
             $d = dir($path);
             while (false !== ($entry = $d->read())) {
-                if ($entry !== '.' && $entry !== '..') {
+                if ($entry !== '.' && $entry !== '..' && $entry[0] !== '.') {
                     $this->loadFromFile($path.DIRECTORY_SEPARATOR.$entry);
                 }
             }
