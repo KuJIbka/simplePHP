@@ -2,10 +2,44 @@
 
 namespace Main\Controller;
 
+use Main\Entity\User;
 use Main\Service\CacheDriver;
+use Main\Service\DB;
+use Main\Service\Session\SessionManager;
 
 class TestController
 {
+    public function testSession()
+    {
+        echo "Start check sessions... <br />\n";
+        echo "Session_id = ".session_id()."<br />\n";
+        echo "Regenerating...";
+        SessionManager::get()->regenerateId(true);
+        echo "Session_id = ".session_id()."<br />\n";
+        SessionManager::get()->setParam('sessionParam', 'sessionValue');
+        if (SessionManager::get()->getParam('sessionParam') === 'sessionValue') {
+            echo "Sessions - OK<br />\n";
+            SessionManager::get()->destroySession();
+        } else {
+            echo "Sessions - ERROR<br />\n";
+        }
+    }
+
+    public function testDB()
+    {
+        echo "Start check DB...<br />\n";
+        $user = new User();
+        $user->setName('someName');
+        DB::get()->getEm()->persist($user);
+        DB::get()->getEm()->flush();
+        if ($user->getId()) {
+            echo "DB - OK<br />\n";
+            DB::get()->getEm()->remove($user);
+        } else {
+            echo "DB - ERROR<br />\n";
+        }
+    }
+
     public function testCache()
     {
         $cacheService = CacheDriver::get();

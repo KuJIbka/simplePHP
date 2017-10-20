@@ -3,7 +3,7 @@ namespace Main\Controller;
 
 use Main\Exception\BaseException;
 use Main\Service\DB;
-use Main\Service\SessionManager;
+use Main\Service\Session\SessionManager;
 
 class MainController extends BaseController
 {

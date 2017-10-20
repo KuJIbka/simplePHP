@@ -6,7 +6,7 @@ use Main\Exception\BaseException;
 use Main\Exception\CommonFatalError;
 use Main\Factory\ResponseFactory;
 use Main\Service\Config;
-use Main\Service\SessionManager;
+use Main\Service\Session\SessionManager;
 use Main\Service\TranslationsService;
 use Sabre\HTTP\Response;
 use Sabre\HTTP\Sapi;

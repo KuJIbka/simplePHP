@@ -1,7 +1,7 @@
 <?php
 
 use Main\Service\CacheDriver;
-use Main\Service\SessionManager;
+use Main\Service\Session\SessionManager;
 
 return [
     'db_driver' => 'pdo_mysql',
@@ -34,4 +34,5 @@ return [
 
     'session_save_handler' => SessionManager::SAVE_HANDLER_FILES,
     'session_save_path' => '',
+    'session_lifetime' => 1440,
 ];

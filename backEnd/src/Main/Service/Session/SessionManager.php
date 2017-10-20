@@ -1,10 +1,13 @@
 <?php
 
-namespace Main\Service;
+namespace Main\Service\Session;
 
 use Main\Exception\BaseException;
 use Main\Exception\CommonFatalError;
 use Main\Entity\User;
+use Main\Service\Config;
+use Main\Service\DB;
+use Main\Service\Session\handlers\SessionRedisHandler;
 use Main\Utils\AbstractSingleton;
 
 /**
@@ -16,7 +19,6 @@ class SessionManager extends AbstractSingleton
     const SAVE_HANDLER_REDIS = 'redis';
 
     const KEY_USER_ID = 'user_id';
-    const KEY_REDMINE_TOKEN = 'redmine_token';
 
     protected static $inst;
     protected $isOpened = false;
@@ -25,13 +27,44 @@ class SessionManager extends AbstractSingleton
     public function init()
     {
         $this->usedDriver = Config::get()->getParam('session_save_handler');
-        if (!in_array($this->usedDriver, [
-            self::SAVE_HANDLER_FILES,
-            self::SAVE_HANDLER_REDIS
-        ])) {
-            throw new BaseException('Hander as '.$this->usedDriver.' does not supported');
+        $sessionSavePath = Config::get()->getParam('session_save_path');
+        $sessionLifeTime = Config::get()->getParam('session_lifetime');
+
+        switch ($this->usedDriver) {
+            case self::SAVE_HANDLER_FILES:
+                ini_set('session.save_handler', $this->usedDriver);
+                ini_set('session.save_path', $sessionSavePath);
+                ini_set('session.gc_maxlifetime', $sessionLifeTime);
+                $handler= null;
+                break;
+
+            case self::SAVE_HANDLER_REDIS:
+                $redis = new \Redis();
+                $parsedSavePath = explode('//', $sessionLifeTime);
+                if (!isset($parsedSavePath[1])) {
+                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
+                }
+                $parsedSavePath = explode(':', $sessionLifeTime[1]);
+                if (!isset($parsedSavePath[1])) {
+                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
+                }
+                $redis->connect(
+                    $parsedSavePath[0],
+                    $parsedSavePath[1],
+                    null,
+                    null,
+                    0
+                );
+                $handler = new SessionRedisHandler($redis, $sessionLifeTime);
+                break;
+
+            default:
+                throw new BaseException('Hander as '.$this->usedDriver.' does not supported');
         }
 
+        if ($handler) {
+            session_set_save_handler($handler, true);
+        }
         ini_set('session.save_handler', $this->usedDriver);
         ini_set('session.save_path', Config::get()->getParam('session_save_path'));
     }
@@ -150,6 +183,18 @@ class SessionManager extends AbstractSingleton
             $this->open();
         }
         session_regenerate_id($delete_old_session);
+        if (!$wasOpen) {
+            $this->close();
+        }
+    }
+
+    public function destroySession()
+    {
+        $wasOpen = $this->isOpened;
+        if (!$wasOpen) {
+            $this->open();
+        }
+        session_destroy();
         if (!$wasOpen) {
             $this->close();
         }

@@ -8,7 +8,7 @@ use Main\Form\Data\LoginFormData;
 use Main\Exception\WrongData;
 use Main\Factory\ResponseFactory;
 use Main\Service\DB;
-use Main\Service\SessionManager;
+use Main\Service\Session\SessionManager;
 use Main\Struct\DefaultResponseData;
 
 class AuthController extends BaseController
@@ -44,6 +44,7 @@ class AuthController extends BaseController
                         SessionManager::get()->open();
                         SessionManager::get()->regenerateId(true);
                         SessionManager::get()->setLoggedUser($user);
+                        SessionManager::get()->close();
                         $responseData = new DefaultResponseData(
                             ResponseFactory::RESP_TYPE_SUCCESS,
                             '',
