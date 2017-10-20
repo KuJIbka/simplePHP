@@ -90,8 +90,11 @@ class SessionManager extends AbstractSingleton
     {
         $timeout = 15000;
         $lockSessionName = 'lock_' . $lockName;
+        $this->refreshSessionData();
         $issetLock = $this->issetParam($lockSessionName);
         while ($issetLock && $timeout >= 0) {
+            $this->refreshSessionData();
+            $issetLock = $this->issetParam($lockSessionName);
             $usleepVal = rand(100, 300);
             usleep($usleepVal);
             $timeout -= $usleepVal;
@@ -148,6 +151,18 @@ class SessionManager extends AbstractSingleton
         }
         session_regenerate_id($delete_old_session);
         if (!$wasOpen) {
+            $this->close();
+        }
+    }
+
+    public function refreshSessionData()
+    {
+        $wasOpen = $this->isOpened;
+        if ($wasOpen) {
+            $this->close();
+            $this->open();
+        } else {
+            $this->open();
             $this->close();
         }
     }
