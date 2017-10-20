@@ -44,7 +44,7 @@ class SessionManager extends AbstractSingleton
                 if (!isset($parsedSavePath[1])) {
                     throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
                 }
-                $parsedSavePath = explode(':', $sessionSavePath[1]);
+                $parsedSavePath = explode(':', $parsedSavePath[1]);
                 if (!isset($parsedSavePath[1])) {
                     throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
                 }
