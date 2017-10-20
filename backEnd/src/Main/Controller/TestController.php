@@ -37,6 +37,18 @@ class TestController
         ob_end_flush();
     }
 
+    public function testLockSession()
+    {
+        ob_start();
+        echo "Start check sessions... <br />\n";
+        echo "Sleep set to 5 sec <br />\n";
+        echo "Settings lock = ... ";
+        SessionManager::get()->sessionLock('lock1');
+        sleep(5);
+        echo "OK <br />\n";
+        ob_end_flush();
+    }
+
     public function testDB()
     {
         echo "Start check DB...<br />\n";
