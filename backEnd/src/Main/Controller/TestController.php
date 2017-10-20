@@ -12,7 +12,9 @@ class TestController
     public function testSession()
     {
         echo "Start check sessions... <br />\n";
+        echo "Session status = ".session_status()."<br />\n";
         echo "Session_id = ".session_id()."<br />\n";
+        echo "Session status = ".session_status()."<br />\n";
         echo "Regenerating...";
         SessionManager::get()->regenerateId(true);
         echo "Session_id = ".session_id()."<br />\n";
