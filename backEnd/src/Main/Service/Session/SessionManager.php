@@ -68,8 +68,6 @@ class SessionManager extends AbstractSingleton
         if ($handler) {
             session_set_save_handler($handler, true);
         }
-        ini_set('session.save_handler', $this->usedDriver);
-        ini_set('session.save_path', Config::get()->getParam('session_save_path'));
     }
 
     public function open()
