@@ -2,7 +2,9 @@
 
 namespace Main\Service\Session\handlers;
 
-class SessionRedisHandler implements \SessionHandlerInterface
+use Main\Exception\CommonFatalError;
+
+class SessionRedisHandler implements MainSessionHandlerInterface
 {
     /** @var \Redis */
     protected $redis;
@@ -50,5 +52,35 @@ class SessionRedisHandler implements \SessionHandlerInterface
     private function getRedisKey($session_id)
     {
         return $this->prefix.':'.$session_id;
+    }
+
+    public function sessionLock(string $lockName): bool
+    {
+        $timeout = 15000000;
+        $expireTimeout = $timeout / 500000;
+        $lockSessionName = 'lock_' . $lockName;
+        $isSet = false;
+        while (!$isSet && $timeout >= 0) {
+            $isSet = $this->redis->set(
+                $lockSessionName,
+                uniqid(),
+                [ 'NX', 'EX' => $expireTimeout ]
+            );
+            if ($isSet) {
+                return true;
+            }
+            $usleepVal = rand(100, 300);
+            usleep($usleepVal);
+            $timeout -= $usleepVal;
+        }
+        if (!$isSet && $timeout < 0) {
+            throw new CommonFatalError();
+        }
+        return false;
+    }
+
+    public function sessionUnlock(string $lockName)
+    {
+        $this->redis->delete('lock_'.$lockName);
     }
 }

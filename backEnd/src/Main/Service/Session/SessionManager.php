@@ -3,10 +3,10 @@
 namespace Main\Service\Session;
 
 use Main\Exception\BaseException;
-use Main\Exception\CommonFatalError;
 use Main\Entity\User;
 use Main\Service\Config;
 use Main\Service\DB;
+use Main\Service\Session\handlers\MainSessionHandlerInterface;
 use Main\Service\Session\handlers\SessionRedisHandler;
 use Main\Utils\AbstractSingleton;
 
@@ -23,6 +23,8 @@ class SessionManager extends AbstractSingleton
     protected static $inst;
     protected $isOpened = false;
     protected $usedDriver = '';
+    /** @var MainSessionHandlerInterface */
+    protected $handler;
 
     public function init()
     {
@@ -56,6 +58,7 @@ class SessionManager extends AbstractSingleton
                     0
                 );
                 $handler = new SessionRedisHandler($redis, $sessionLifeTime);
+                $this->handler = $handler;
                 break;
 
             default:
@@ -79,12 +82,12 @@ class SessionManager extends AbstractSingleton
         $this->isOpened = true;
     }
 
-    public function getParam($name, $default = null)
+    public function getParam(string $name, $default = null)
     {
         return isset($_SESSION[$name]) ? $_SESSION[$name] : $default;
     }
 
-    public function setParam($name, $value)
+    public function setParam(string $name, $value)
     {
         $wasOpen = $this->isOpened;
         if (!$wasOpen) {
@@ -96,7 +99,7 @@ class SessionManager extends AbstractSingleton
         }
     }
 
-    public function removeParam($name)
+    public function removeParam(string $name)
     {
         $wasOpen = $this->isOpened;
         if (!$wasOpen) {
@@ -108,7 +111,7 @@ class SessionManager extends AbstractSingleton
         }
     }
 
-    public function issetParam($name)
+    public function issetParam(string $name): bool
     {
         return isset($_SESSION[$name]);
     }
@@ -119,34 +122,25 @@ class SessionManager extends AbstractSingleton
         $this->isOpened = false;
     }
 
-    public function sessionLock($lockName)
+    public function sessionLock(string $lockName)
     {
-        $timeout = 15000000;
-        $lockSessionName = 'lock_' . $lockName;
-        $this->refreshSessionData();
-        $issetLock = $this->issetParam($lockSessionName);
-        while ($issetLock && $timeout >= 0) {
-            $this->refreshSessionData();
-            $issetLock = $this->issetParam($lockSessionName);
-            $usleepVal = rand(100, 300);
-            usleep($usleepVal);
-            $timeout -= $usleepVal;
-        }
-        if ($issetLock && $timeout < 0) {
-            throw new CommonFatalError();
-        }
-        $this->setParam($lockSessionName, true);
-    }
-
-    public function sessionUnlock($lockName)
-    {
-        $lockSessionName = 'lock_' . $lockName;
-        if ($this->issetParam($lockSessionName)) {
-            $this->removeParam($lockSessionName);
+        if ($this->handler) {
+            $this->handler->sessionLock($lockName);
+        } else {
+            $this->open();
         }
     }
 
-    public function isLogged()
+    public function sessionUnlock(string $lockName)
+    {
+        if ($this->handler) {
+            $this->handler->sessionUnlock($lockName);
+        } else {
+            $this->close();
+        }
+    }
+
+    public function isLogged(): bool
     {
         return $this->issetParam(self::KEY_USER_ID);
     }
@@ -176,7 +170,7 @@ class SessionManager extends AbstractSingleton
         $this->close();
     }
 
-    public function regenerateId($delete_old_session = false)
+    public function regenerateId(bool $delete_old_session = false)
     {
         $wasOpen = $this->isOpened;
         if (!$wasOpen) {
