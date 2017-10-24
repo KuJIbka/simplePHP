@@ -150,7 +150,6 @@ class SessionManager extends AbstractSingleton
         if ($this->isLogged()) {
             $userId = $this->getParam(self::KEY_USER_ID);
             return DB::get()->getUserRepository()->find($userId);
-
         }
         return null;
     }
