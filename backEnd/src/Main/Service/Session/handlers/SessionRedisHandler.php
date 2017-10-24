@@ -65,7 +65,7 @@ class SessionRedisHandler implements MainSessionHandlerInterface
     {
         $timeout = 15000000;
         $expireTimeout = $timeout / 500000;
-        $lockSessionName = $this->getSessionLockKeyName($lockName);
+        $lockSessionName = $this->getSessionLockLockName($lockName);
         $isSet = false;
         while (!$isSet && $timeout >= 0) {
             $isSet = $this->redis->set(
@@ -88,10 +88,10 @@ class SessionRedisHandler implements MainSessionHandlerInterface
 
     public function sessionUnlock(string $lockName)
     {
-        $this->redis->delete($this->getSessionLockKeyName($lockName));
+        $this->redis->delete($this->getSessionLockLockName($lockName));
     }
 
-    public function getSessionLockKeyName(String $key): string
+    public function getSessionLockLockName(String $key): string
     {
         return 'lock_'.session_id().'_'.$key;
     }

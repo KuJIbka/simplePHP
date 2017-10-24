@@ -4,9 +4,9 @@ namespace Main\Service\Session\handlers;
 
 interface MainSessionHandlerInterface extends \SessionHandlerInterface
 {
-    public function sessionLock(string $key);
+    public function sessionLock(string $key): bool;
 
     public function sessionUnlock(string $key);
 
-    public function getSessionLockKeyName(String $key): string;
+    public function getSessionLockLockName(String $key): string;
 }
