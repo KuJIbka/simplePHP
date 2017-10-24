@@ -70,11 +70,11 @@ class SessionManager extends AbstractSingleton
                 $memcache = new \Memcache();
                 $parsedSavePath = explode('//', $sessionSavePath);
                 if (!isset($parsedSavePath[1])) {
-                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
+                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for memcache');
                 }
                 $parsedSavePath = explode(':', $parsedSavePath[1]);
                 if (!isset($parsedSavePath[1])) {
-                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
+                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for memcache');
                 }
                 $memcache->connect($parsedSavePath[0], $parsedSavePath[1], 0.0);
                 $handler = new SessionMemcacheHandler($memcache, $sessionLifeTime, $sessionMaxLockTime);
@@ -84,11 +84,11 @@ class SessionManager extends AbstractSingleton
                 $memcached = new \Memcached();
                 $parsedSavePath = explode('//', $sessionSavePath);
                 if (!isset($parsedSavePath[1])) {
-                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
+                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for memcached');
                 }
                 $parsedSavePath = explode(':', $parsedSavePath[1]);
                 if (!isset($parsedSavePath[1])) {
-                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
+                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for memcached');
                 }
                 $memcached->addServer($parsedSavePath[0], $parsedSavePath[1]);
                 $handler = new SessionMemcachedHandler($memcached, $sessionLifeTime, $sessionMaxLockTime);
