@@ -41,7 +41,7 @@ class SessionRedisHandler implements MainSessionHandlerInterface
 
     public function read($session_id)
     {
-        return $this->redis->get($this->getRedisKey($session_id)) ?: '';
+        return $this->redis->get($this->getRedisKey($session_id));
     }
 
     public function write($session_id, $session_data)
