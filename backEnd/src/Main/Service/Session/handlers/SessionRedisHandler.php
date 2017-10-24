@@ -41,12 +41,13 @@ class SessionRedisHandler implements MainSessionHandlerInterface
 
     public function read($session_id)
     {
-        return $this->redis->get($this->getRedisKey($session_id));
+        return $this->redis->get($this->getRedisKey($session_id)) ?: '';
     }
 
     public function write($session_id, $session_data)
     {
         $this->redis->set($this->getRedisKey($session_id), $session_data, $this->gcMaxLifeTime);
+        return true;
     }
 
     private function getRedisKey($session_id)
@@ -87,5 +88,10 @@ class SessionRedisHandler implements MainSessionHandlerInterface
     public function getSessionLockKeyName(String $key): string
     {
         return 'lock_'.session_id().'_'.$key;
+    }
+
+    public function __destruct()
+    {
+        $this->close();
     }
 }
