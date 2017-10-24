@@ -41,7 +41,7 @@ class SessionRedisHandler implements MainSessionHandlerInterface
 
     public function read($session_id)
     {
-        return $this->redis->get($this->getRedisKey($session_id));
+        return $this->redis->get($this->getRedisKey($session_id)) ?: '';
     }
 
     public function write($session_id, $session_data)
@@ -58,7 +58,7 @@ class SessionRedisHandler implements MainSessionHandlerInterface
     {
         $timeout = 15000000;
         $expireTimeout = $timeout / 500000;
-        $lockSessionName = 'lock_' . $lockName;
+        $lockSessionName = $this->getSessionLockKeyName($lockName);
         $isSet = false;
         while (!$isSet && $timeout >= 0) {
             $isSet = $this->redis->set(
@@ -81,6 +81,11 @@ class SessionRedisHandler implements MainSessionHandlerInterface
 
     public function sessionUnlock(string $lockName)
     {
-        $this->redis->delete('lock_'.$lockName);
+        $this->redis->delete($this->getSessionLockKeyName($lockName));
+    }
+
+    public function getSessionLockKeyName(String $key): string
+    {
+        return 'lock_'.session_id().'_'.$key;
     }
 }
