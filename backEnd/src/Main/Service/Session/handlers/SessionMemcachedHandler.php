@@ -57,7 +57,7 @@ class SessionMemcachedHandler implements MainSessionHandlerInterface
     /** {@inheritdoc} */
     public function write($session_id, $session_data)
     {
-        return $this->memcached->set($this->getMemcachedKey($session_id), $session_data, $this->gcMaxLifeTime);
+        return $this->memcached->set($this->getMemcachedKey($session_id), $session_data, time() + $this->gcMaxLifeTime);
     }
 
     public function sessionLock(string $key): bool
@@ -67,7 +67,7 @@ class SessionMemcachedHandler implements MainSessionHandlerInterface
         $lockSessionName = $this->getSessionLockName($key);
         $isSet = false;
         while (!$isSet && $timeout >= 0) {
-            $isSet = $this->memcached->add($lockSessionName, uniqid(), $expireTimeout);
+            $isSet = $this->memcached->add($lockSessionName, uniqid(), time() + $expireTimeout);
             if ($isSet) {
                 return true;
             }
