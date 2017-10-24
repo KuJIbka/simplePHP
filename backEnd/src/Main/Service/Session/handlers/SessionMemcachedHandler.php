@@ -3,23 +3,22 @@
 namespace Main\Service\Session\handlers;
 
 use Main\Exception\CommonFatalError;
-use Main\Service\Config;
 
-class SessionRedisHandler implements MainSessionHandlerInterface
+class SessionMemcachedHandler implements MainSessionHandlerInterface
 {
-    /** @var \Redis */
-    protected $redis;
+    /** @var \Memcached */
+    protected $memcached;
     protected $prefix = '';
     protected $gcMaxLifeTime = 0;
     protected $maxLockTime = 0;
 
     public function __construct(
-        \Redis $redis,
+        \Memcached $memcached,
         int $gcMaxLifeTime = 1440,
         int $maxLockTime = 15,
         $prefix = 'PHPSESSID'
     ) {
-        $this->redis = $redis;
+        $this->memcached = $memcached;
         $this->prefix = $prefix;
         $this->gcMaxLifeTime = $gcMaxLifeTime;
         $this->maxLockTime = $maxLockTime;
@@ -34,7 +33,7 @@ class SessionRedisHandler implements MainSessionHandlerInterface
     /** {@inheritdoc} */
     public function destroy($session_id)
     {
-        return $this->redis->del($this->getRedisKey($session_id));
+        $this->memcached->delete($this->getMemcachedKey($session_id));
     }
 
     /** {@inheritdoc} */
@@ -52,13 +51,13 @@ class SessionRedisHandler implements MainSessionHandlerInterface
     /** {@inheritdoc} */
     public function read($session_id)
     {
-        return $this->redis->get($this->getRedisKey($session_id)) ?: '';
+        return $this->memcached->get($this->getMemcachedKey($session_id)) ?: '';
     }
 
     /** {@inheritdoc} */
     public function write($session_id, $session_data)
     {
-        return $this->redis->set($this->getRedisKey($session_id), $session_data, $this->gcMaxLifeTime);
+        return $this->memcached->set($this->getMemcachedKey($session_id), $session_data, $this->gcMaxLifeTime);
     }
 
     public function sessionLock(string $key): bool
@@ -68,11 +67,7 @@ class SessionRedisHandler implements MainSessionHandlerInterface
         $lockSessionName = $this->getSessionLockName($key);
         $isSet = false;
         while (!$isSet && $timeout >= 0) {
-            $isSet = $this->redis->set(
-                $lockSessionName,
-                uniqid(),
-                [ 'NX', 'EX' => $expireTimeout ]
-            );
+            $isSet = $this->memcached->add($lockSessionName, uniqid(), $expireTimeout);
             if ($isSet) {
                 return true;
             }
@@ -86,9 +81,9 @@ class SessionRedisHandler implements MainSessionHandlerInterface
         return false;
     }
 
-    public function sessionUnlock(string $lockName)
+    public function sessionUnlock(string $key)
     {
-        $this->redis->delete($this->getSessionLockName($lockName));
+        $this->memcached->delete($this->getSessionLockName($key));
     }
 
     public function getSessionLockName(String $key): string
@@ -96,18 +91,13 @@ class SessionRedisHandler implements MainSessionHandlerInterface
         return 'lock_'.session_id().'_'.$key;
     }
 
-    private function getRedisKey(string $session_id): string
+    public function getMemcached(): \Memcached
+    {
+        return $this->memcached;
+    }
+
+    private function getMemcachedKey(string $session_id): string
     {
         return $this->prefix.':'.$session_id;
-    }
-
-    public function getRedis(): \Redis
-    {
-        return $this->redis;
-    }
-
-    public function __destruct()
-    {
-        $this->close();
     }
 }

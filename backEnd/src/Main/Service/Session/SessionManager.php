@@ -7,6 +7,8 @@ use Main\Entity\User;
 use Main\Service\Config;
 use Main\Service\DB;
 use Main\Service\Session\handlers\MainSessionHandlerInterface;
+use Main\Service\Session\handlers\SessionMemcachedHandler;
+use Main\Service\Session\handlers\SessionMemcacheHandler;
 use Main\Service\Session\handlers\SessionRedisHandler;
 use Main\Utils\AbstractSingleton;
 
@@ -17,6 +19,8 @@ class SessionManager extends AbstractSingleton
 {
     const SAVE_HANDLER_FILES = 'files';
     const SAVE_HANDLER_REDIS = 'redis';
+    const SAVE_HANDLER_MEMCACHE = 'memcache';
+    const SAVE_HANDLER_MEMCACHED = 'memcached';
 
     const KEY_USER_ID = 'user_id';
 
@@ -31,6 +35,7 @@ class SessionManager extends AbstractSingleton
         $this->usedDriver = Config::get()->getParam('session_save_handler');
         $sessionSavePath = Config::get()->getParam('session_save_path');
         $sessionLifeTime = Config::get()->getParam('session_lifetime');
+        $sessionMaxLockTime = Config::get()->getParam('session_max_lock_time');
 
         switch ($this->usedDriver) {
             case self::SAVE_HANDLER_FILES:
@@ -53,16 +58,44 @@ class SessionManager extends AbstractSingleton
                 $redis->connect(
                     $parsedSavePath[0],
                     $parsedSavePath[1],
-                    null,
+                    0.0,
                     null,
                     0
                 );
-                $handler = new SessionRedisHandler($redis, $sessionLifeTime);
+                $handler = new SessionRedisHandler($redis, $sessionLifeTime, $sessionMaxLockTime);
                 $this->handler = $handler;
                 break;
 
+            case self::SAVE_HANDLER_MEMCACHE:
+                $memcache = new \Memcache();
+                $parsedSavePath = explode('//', $sessionSavePath);
+                if (!isset($parsedSavePath[1])) {
+                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
+                }
+                $parsedSavePath = explode(':', $parsedSavePath[1]);
+                if (!isset($parsedSavePath[1])) {
+                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
+                }
+                $memcache->connect($parsedSavePath[0], $parsedSavePath[1], 0.0);
+                $handler = new SessionMemcacheHandler($memcache, $sessionLifeTime, $sessionMaxLockTime);
+                break;
+
+            case self::SAVE_HANDLER_MEMCACHED:
+                $memcached = new \Memcached();
+                $parsedSavePath = explode('//', $sessionSavePath);
+                if (!isset($parsedSavePath[1])) {
+                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
+                }
+                $parsedSavePath = explode(':', $parsedSavePath[1]);
+                if (!isset($parsedSavePath[1])) {
+                    throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for redis');
+                }
+                $memcached->addServer($parsedSavePath[0], $parsedSavePath[1]);
+                $handler = new SessionMemcachedHandler($memcached, $sessionLifeTime, $sessionMaxLockTime);
+                break;
+
             default:
-                throw new BaseException('Hander as '.$this->usedDriver.' does not supported');
+                throw new BaseException('Handler as '.$this->usedDriver.' does not supported');
         }
 
         if ($handler) {

@@ -35,4 +35,5 @@ return [
     'session_save_handler' => SessionManager::SAVE_HANDLER_FILES,
     'session_save_path' => '',
     'session_lifetime' => 1440,
+    'session_max_lock_time' => 15,
 ];
