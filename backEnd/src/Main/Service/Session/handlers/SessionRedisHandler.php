@@ -18,39 +18,45 @@ class SessionRedisHandler implements MainSessionHandlerInterface
         $this->gcMaxLifeTime = $gcMaxLifeTime;
     }
 
+    /** {@inheritdoc} */
     public function close()
     {
         return true;
     }
 
+    /** {@inheritdoc} */
     public function destroy($session_id)
     {
         $this->redis->del($this->getRedisKey($session_id));
         return true;
     }
 
+    /** {@inheritdoc} */
     public function gc($maxlifetime)
     {
         return true;
     }
 
+    /** {@inheritdoc} */
     public function open($save_path, $name)
     {
         return true;
     }
 
+    /** {@inheritdoc} */
     public function read($session_id)
     {
         return $this->redis->get($this->getRedisKey($session_id)) ?: '';
     }
 
+    /** {@inheritdoc} */
     public function write($session_id, $session_data)
     {
         $this->redis->set($this->getRedisKey($session_id), $session_data, $this->gcMaxLifeTime);
         return true;
     }
 
-    private function getRedisKey($session_id)
+    private function getRedisKey(string $session_id): string
     {
         return $this->prefix.':'.$session_id;
     }
