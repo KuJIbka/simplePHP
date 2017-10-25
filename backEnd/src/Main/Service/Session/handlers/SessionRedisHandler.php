@@ -3,7 +3,6 @@
 namespace Main\Service\Session\handlers;
 
 use Main\Exception\CommonFatalError;
-use Main\Service\Config;
 
 class SessionRedisHandler implements MainSessionHandlerInterface
 {
@@ -34,7 +33,8 @@ class SessionRedisHandler implements MainSessionHandlerInterface
     /** {@inheritdoc} */
     public function destroy($session_id)
     {
-        return $this->redis->del($this->getRedisKey($session_id));
+        $this->redis->del($this->getRedisKey($session_id));
+        return true;
     }
 
     /** {@inheritdoc} */

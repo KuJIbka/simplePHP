@@ -34,6 +34,7 @@ class SessionMemcachedHandler implements MainSessionHandlerInterface
     public function destroy($session_id)
     {
         $this->memcached->delete($this->getMemcachedKey($session_id));
+        return true;
     }
 
     /** {@inheritdoc} */
