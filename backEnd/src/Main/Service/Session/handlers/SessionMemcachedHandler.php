@@ -97,7 +97,7 @@ class SessionMemcachedHandler implements MainSessionHandlerInterface
 
     public function getSessionLockName(String $key): string
     {
-        return 'lock_'.session_id().'_'.$key;
+        return 'lock_'.$key;
     }
 
     public function getMemcached(): \Memcached

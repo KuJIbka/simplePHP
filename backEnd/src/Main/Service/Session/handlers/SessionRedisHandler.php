@@ -93,7 +93,7 @@ class SessionRedisHandler implements MainSessionHandlerInterface
 
     public function getSessionLockName(String $key): string
     {
-        return 'lock_'.session_id().'_'.$key;
+        return 'lock_'.$key;
     }
 
     private function getRedisKey(string $session_id): string

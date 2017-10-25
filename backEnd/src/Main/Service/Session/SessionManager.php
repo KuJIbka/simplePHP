@@ -228,11 +228,9 @@ class SessionManager extends AbstractSingleton
     {
         $wasOpen = $this->isOpened;
         if ($wasOpen) {
-            $this->close();
-            $this->open();
-        } else {
-            $this->open();
-            $this->close();
+            throw new BaseException('Can not refresh opened session');
         }
+        $this->open();
+        $this->close();
     }
 }
