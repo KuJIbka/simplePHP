@@ -23,8 +23,6 @@ abstract class SessionHandlerAbstract implements \SessionHandlerInterface, \Sess
      */
     public function validateId($session_id)
     {
-        var_dump('validateId '.$session_id);
-        @var_dump($_SESSION);
         $this->prefetchData = $this->read($session_id);
         $this->prefetchId = $session_id;
         $result = '' !== $this->prefetchData;
@@ -41,8 +39,6 @@ abstract class SessionHandlerAbstract implements \SessionHandlerInterface, \Sess
     /** {@inheritdoc} */
     public function open($save_path, $name)
     {
-        var_dump('open');
-        @var_dump($_SESSION);
         $this->sessionName = $name;
         return true;
     }
