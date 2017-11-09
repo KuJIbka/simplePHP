@@ -77,6 +77,7 @@ abstract class SessionHandlerAbstract implements \SessionHandlerInterface, \Sess
     /** {@inheritdoc} */
     public function close()
     {
+        var_dump('close');
         if ($this->locked) {
             $this->sessionUnLock(session_id());
             $this->locked = false;
@@ -87,6 +88,7 @@ abstract class SessionHandlerAbstract implements \SessionHandlerInterface, \Sess
     /** {@inheritdoc} */
     public function destroy($session_id)
     {
+        var_dump('destroy');
         if (!headers_sent() && ini_get('session.use_cookies')) {
             if (!$this->sessionName) {
                 throw new \LogicException(sprintf('Session name cannot be empty, did you forget to call 
