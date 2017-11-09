@@ -98,7 +98,7 @@ class SessionRedisHandler extends SessionHandlerAbstract
     /** {@inheritdoc} */
     public function updateTimestamp($key, $val)
     {
-        $this->redis->expire($this->getRedisKey($key), $this->gcMaxLifeTime);
+        return $this->redis->expire($this->getRedisKey($key), $this->gcMaxLifeTime);
     }
 
     public function gc($maxlifetime)
