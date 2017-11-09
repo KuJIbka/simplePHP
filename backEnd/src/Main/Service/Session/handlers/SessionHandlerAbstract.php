@@ -63,12 +63,15 @@ abstract class SessionHandlerAbstract implements \SessionHandlerInterface, \Sess
     /** {@inheritdoc} */
     public function write($session_id, $session_data)
     {
+        var_dump('write');
         if (null === $this->igbinaryEmptyData) {
             // see https://github.com/igbinary/igbinary/issues/146
             $this->igbinaryEmptyData = \function_exists('igbinary_serialize') ? igbinary_serialize(array()) : '';
         }
         if ('' === $session_data || $this->igbinaryEmptyData === $session_data) {
-            return $this->destroy($session_id);
+            $r = $this->destroy($session_id);
+            var_dump($r);
+            return $r;
         }
         $this->newSessionId = null;
         $r = $this->doWrite($session_id, $session_data);
