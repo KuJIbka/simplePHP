@@ -76,7 +76,7 @@ class SessionManager extends AbstractSingleton
                 if (!isset($parsedSavePath[1])) {
                     throw new BaseException('Wrong sessions save path: '.$sessionSavePath.' for memcache');
                 }
-                $memcache->connect($parsedSavePath[0], $parsedSavePath[1], 0.0);
+                $memcache->connect($parsedSavePath[0], $parsedSavePath[1]);
                 $handler = new SessionMemcacheHandler($memcache, $sessionLifeTime, $sessionMaxLockTime);
                 break;
 
@@ -153,24 +153,6 @@ class SessionManager extends AbstractSingleton
         $this->isOpened = false;
     }
 
-    public function sessionLock(string $lockName)
-    {
-        if ($this->handler) {
-            $this->handler->sessionLock($lockName);
-        } else {
-            $this->open();
-        }
-    }
-
-    public function sessionUnlock(string $lockName)
-    {
-        if ($this->handler) {
-            $this->handler->sessionUnlock($lockName);
-        } else {
-            $this->close();
-        }
-    }
-
     public function isLogged(): bool
     {
         return $this->issetParam(self::KEY_USER_ID);
@@ -219,6 +201,7 @@ class SessionManager extends AbstractSingleton
             $this->open();
         }
         session_destroy();
+        unset($_SESSION);
         if (!$wasOpen) {
             $this->close();
         }

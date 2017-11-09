@@ -5,6 +5,7 @@ namespace Main\Core;
 use Doctrine\DBAL\Migrations\Configuration\Configuration;
 use Doctrine\DBAL\Migrations\Tools\Console\Helper\ConfigurationHelper;
 use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
+use Main\Command\AddNewUserCommand;
 use Main\Command\LangToJsonCommand;
 use Main\Service\Config;
 use Main\Service\DB;
@@ -39,6 +40,8 @@ class AppConsole extends App
 
         $this->symfonyApp->addCommands([
             new LangToJsonCommand(),
+            new AddNewUserCommand(),
+
             new \Doctrine\DBAL\Migrations\Tools\Console\Command\DiffCommand(),
             new \Doctrine\DBAL\Migrations\Tools\Console\Command\ExecuteCommand(),
             new \Doctrine\DBAL\Migrations\Tools\Console\Command\GenerateCommand(),

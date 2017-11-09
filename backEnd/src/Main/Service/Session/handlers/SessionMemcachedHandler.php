@@ -4,7 +4,7 @@ namespace Main\Service\Session\handlers;
 
 use Main\Exception\CommonFatalError;
 
-class SessionMemcachedHandler implements MainSessionHandlerInterface
+class SessionMemcachedHandler extends SessionHandlerAbstract
 {
     /** @var \Memcached */
     protected $memcached;
@@ -24,47 +24,6 @@ class SessionMemcachedHandler implements MainSessionHandlerInterface
         $this->maxLockTime = $maxLockTime;
     }
 
-    /** {@inheritdoc} */
-    public function close()
-    {
-        return true;
-    }
-
-    /** {@inheritdoc} */
-    public function destroy($session_id)
-    {
-        $this->memcached->delete($this->getMemcachedKey($session_id));
-        return true;
-    }
-
-    /** {@inheritdoc} */
-    public function gc($maxlifetime)
-    {
-        return true;
-    }
-
-    /** {@inheritdoc} */
-    public function open($save_path, $name)
-    {
-        return true;
-    }
-
-    /** {@inheritdoc} */
-    public function read($session_id)
-    {
-        return $this->memcached->get($this->getMemcachedKey($session_id)) ?: '';
-    }
-
-    /** {@inheritdoc} */
-    public function write($session_id, $session_data)
-    {
-        return $this->memcached->set(
-            $this->getMemcachedKey($session_id),
-            $session_data,
-            $_SERVER['REQUEST_TIME'] + $this->gcMaxLifeTime
-        );
-    }
-
     public function sessionLock(string $key): bool
     {
         $timeout = $this->maxLockTime * 1000000;
@@ -81,7 +40,7 @@ class SessionMemcachedHandler implements MainSessionHandlerInterface
                 return true;
             }
             $usleepVal = rand(100, 300);
-            usleep($usleepVal);
+            usleep($usleepVal * 1000);
             $timeout -= $usleepVal;
         }
         if (!$isSet && $timeout < 0) {
@@ -108,5 +67,42 @@ class SessionMemcachedHandler implements MainSessionHandlerInterface
     private function getMemcachedKey(string $session_id): string
     {
         return $this->prefix.':'.$session_id;
+    }
+
+    protected function doRead(string  $sessionId): string
+    {
+        return $this->memcached->get($this->getMemcachedKey($sessionId)) ?: '';
+    }
+
+    protected function doWrite(string $session_id, string $session_data): bool
+    {
+        return $this->memcached->set(
+            $this->getMemcachedKey($session_id),
+            $session_data,
+            $_SERVER['REQUEST_TIME'] + $this->gcMaxLifeTime
+        );
+    }
+
+    protected function doDestroy(string $session_id): bool
+    {
+        $this->memcached->delete($this->getMemcachedKey($session_id));
+        return true;
+    }
+
+    protected function doClose(): bool
+    {
+        return true;
+    }
+
+    /** {@inheritdoc} */
+    public function updateTimestamp($key, $val)
+    {
+        return $this->memcached->touch($this->getMemcachedKey($key), $this->gcMaxLifeTime);
+    }
+
+    /** {@inheritdoc} */
+    public function gc($maxlifetime)
+    {
+        return true;
     }
 }

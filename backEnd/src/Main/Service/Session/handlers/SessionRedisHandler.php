@@ -4,7 +4,7 @@ namespace Main\Service\Session\handlers;
 
 use Main\Exception\CommonFatalError;
 
-class SessionRedisHandler implements MainSessionHandlerInterface
+class SessionRedisHandler extends SessionHandlerAbstract
 {
     /** @var \Redis */
     protected $redis;
@@ -24,43 +24,6 @@ class SessionRedisHandler implements MainSessionHandlerInterface
         $this->maxLockTime = $maxLockTime;
     }
 
-    /** {@inheritdoc} */
-    public function close()
-    {
-        return true;
-    }
-
-    /** {@inheritdoc} */
-    public function destroy($session_id)
-    {
-        $this->redis->del($this->getRedisKey($session_id));
-        return true;
-    }
-
-    /** {@inheritdoc} */
-    public function gc($maxlifetime)
-    {
-        return true;
-    }
-
-    /** {@inheritdoc} */
-    public function open($save_path, $name)
-    {
-        return true;
-    }
-
-    /** {@inheritdoc} */
-    public function read($session_id)
-    {
-        return $this->redis->get($this->getRedisKey($session_id)) ?: '';
-    }
-
-    /** {@inheritdoc} */
-    public function write($session_id, $session_data)
-    {
-        return $this->redis->set($this->getRedisKey($session_id), $session_data, $this->gcMaxLifeTime);
-    }
-
     public function sessionLock(string $key): bool
     {
         $timeout = $this->maxLockTime * 1000000;
@@ -77,7 +40,7 @@ class SessionRedisHandler implements MainSessionHandlerInterface
                 return true;
             }
             $usleepVal = rand(100, 300);
-            usleep($usleepVal);
+            usleep($usleepVal * 1000);
             $timeout -= $usleepVal;
         }
         if (!$isSet && $timeout < 0) {
@@ -109,5 +72,37 @@ class SessionRedisHandler implements MainSessionHandlerInterface
     public function __destruct()
     {
         $this->close();
+    }
+
+    protected function doRead(string $session_id): string
+    {
+        return $this->redis->get($this->getRedisKey($session_id)) ?: '';
+    }
+
+    protected function doWrite(string $session_id, string $session_data): bool
+    {
+        return $this->redis->set($this->getRedisKey($session_id), $session_data, $this->gcMaxLifeTime);
+    }
+
+    protected function doDestroy(string $session_id): bool
+    {
+        $this->redis->del($this->getRedisKey($session_id));
+        return true;
+    }
+
+    protected function doClose(): bool
+    {
+        return true;
+    }
+
+    /** {@inheritdoc} */
+    public function updateTimestamp($key, $val)
+    {
+        $this->redis->expire($this->getRedisKey($key), $this->gcMaxLifeTime);
+    }
+
+    public function gc($maxlifetime)
+    {
+        return true;
     }
 }

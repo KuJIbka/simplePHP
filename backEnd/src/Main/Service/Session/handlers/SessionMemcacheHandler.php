@@ -4,7 +4,7 @@ namespace Main\Service\Session\handlers;
 
 use Main\Exception\CommonFatalError;
 
-class SessionMemcacheHandler implements MainSessionHandlerInterface
+class SessionMemcacheHandler extends SessionHandlerAbstract
 {
     /** @var \Memcache */
     protected $memcache;
@@ -24,14 +24,13 @@ class SessionMemcacheHandler implements MainSessionHandlerInterface
         $this->maxLockTime = $maxLockTime;
     }
 
-    /** {@inheritdoc} */
-    public function close()
+    public function doClose(): bool
     {
         return true;
     }
 
     /** {@inheritdoc} */
-    public function destroy($session_id)
+    public function doDestroy(string $session_id): bool
     {
         $this->memcache->delete($this->getMemcacheKey($session_id));
         return true;
@@ -44,19 +43,13 @@ class SessionMemcacheHandler implements MainSessionHandlerInterface
     }
 
     /** {@inheritdoc} */
-    public function open($save_path, $name)
-    {
-        return true;
-    }
-
-    /** {@inheritdoc} */
-    public function read($session_id)
+    public function doRead(string $session_id): string
     {
         return $this->memcache->get($this->getMemcacheKey($session_id)) ?: '';
     }
 
     /** {@inheritdoc} */
-    public function write($session_id, $session_data)
+    public function doWrite(string $session_id, string $session_data): bool
     {
         return $this->memcache->set($this->getMemcacheKey($session_id), $session_data, 0, $this->gcMaxLifeTime);
     }
@@ -73,7 +66,7 @@ class SessionMemcacheHandler implements MainSessionHandlerInterface
                 return true;
             }
             $usleepVal = rand(100, 300);
-            usleep($usleepVal);
+            usleep($usleepVal * 1000);
             $timeout -= $usleepVal;
         }
         if (!$isSet && $timeout < 0) {
@@ -100,5 +93,11 @@ class SessionMemcacheHandler implements MainSessionHandlerInterface
     private function getMemcacheKey(string $session_id): string
     {
         return $this->prefix.':'.$session_id;
+    }
+
+    /** {@inheritdoc} */
+    public function updateTimestamp($key, $val)
+    {
+        return true;
     }
 }
