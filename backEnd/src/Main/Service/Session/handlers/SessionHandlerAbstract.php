@@ -126,6 +126,10 @@ abstract class SessionHandlerAbstract implements \SessionHandlerInterface, \Sess
                 );
             }
         }
+        if ($this->locked) {
+            $this->sessionUnLock($session_id);
+            $this->locked = false;
+        }
         return $this->newSessionId === $session_id || $this->doDestroy($session_id);
     }
 }
