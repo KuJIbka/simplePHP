@@ -71,7 +71,9 @@ abstract class SessionHandlerAbstract implements \SessionHandlerInterface, \Sess
             return $this->destroy($session_id);
         }
         $this->newSessionId = null;
-        return $this->doWrite($session_id, $session_data);
+        $r = $this->doWrite($session_id, $session_data);
+        var_dump($r);
+        return $r;
     }
 
     /** {@inheritdoc} */
