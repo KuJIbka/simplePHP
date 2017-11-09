@@ -172,16 +172,6 @@ class SessionManager extends AbstractSingleton
         $this->setParam(self::KEY_USER_ID, $user->getId());
     }
 
-    public function clearSession()
-    {
-        $this->open();
-        $_SESSION = [];
-        setcookie(session_name(), '', time() - 42000, '/');
-        session_regenerate_id(true);
-        session_destroy();
-        $this->close();
-    }
-
     public function regenerateId(bool $delete_old_session = false)
     {
         $wasOpen = $this->isOpened;

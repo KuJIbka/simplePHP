@@ -63,7 +63,9 @@ class AuthController extends BaseController
 
     public function logout()
     {
-        SessionManager::get()->clearSession();
+        SessionManager::get()->open();
+        SessionManager::get()->regenerateId(true);
+        SessionManager::get()->close();
         return ResponseFactory::getJsonResponse(new DefaultResponseData(
             ResponseFactory::RESP_TYPE_SUCCESS,
             '',
