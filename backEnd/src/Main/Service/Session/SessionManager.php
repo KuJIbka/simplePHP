@@ -158,7 +158,7 @@ class SessionManager extends AbstractSingleton
         return $this->issetParam(self::KEY_USER_ID);
     }
 
-    public function getLoggedUser(): User
+    public function getLoggedUser(): ?User
     {
         if ($this->isLogged()) {
             $userId = $this->getParam(self::KEY_USER_ID);
@@ -167,7 +167,7 @@ class SessionManager extends AbstractSingleton
         return null;
     }
 
-    public function setLoggedUser(User $user)
+    public function setLoggedUser(User $user = null)
     {
         $this->setParam(self::KEY_USER_ID, $user->getId());
     }
