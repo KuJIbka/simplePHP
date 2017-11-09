@@ -82,6 +82,7 @@ abstract class SessionHandlerAbstract implements \SessionHandlerInterface, \Sess
             $this->sessionUnLock(session_id());
             $this->locked = false;
         }
+        var_dump($this->doClose());
         return $this->doClose();
     }
 
