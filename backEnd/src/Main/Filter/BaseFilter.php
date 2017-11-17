@@ -4,7 +4,7 @@ namespace Main\Filter;
 
 abstract class BaseFilter
 {
-    abstract public function isEmpty();
+    abstract public function isEmpty(): bool;
     abstract public function clearFilters();
 
     protected $forUpdate = false;

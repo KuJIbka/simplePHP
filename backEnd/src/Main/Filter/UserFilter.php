@@ -6,7 +6,7 @@ class UserFilter extends BaseFilter
 {
     protected $ids;
 
-    public function getIds()
+    public function getIds(): ?array
     {
         return $this->ids;
     }
@@ -17,7 +17,7 @@ class UserFilter extends BaseFilter
         return $this;
     }
 
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return (!is_null($this->getIds()) && empty($this->getIds()));
     }
