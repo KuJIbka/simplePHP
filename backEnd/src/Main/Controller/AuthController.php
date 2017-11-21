@@ -54,7 +54,7 @@ class AuthController extends BaseController
                 }
             }
         } catch (\Exception $e) {
-            DB::get()->getEm()->rollback();
+            DB::get()->getEm()->getConnection()->isTransactionActive() && DB::get()->getEm()->rollback();
         }
         return ResponseFactory::getJsonResponse($responseData);
     }
