@@ -3,20 +3,20 @@
 namespace Main\Form\Validator;
 
 use Main\Form\AbstractDataValueManager;
+use Main\Form\NullableTrait;
 use Main\Struct\LocalisationChoiceString;
 use Main\Struct\LocalisationString;
 
 abstract class BaseFormValidator extends AbstractDataValueManager implements ValidatorInterface
 {
-    use FormValidatorTrait;
-
-    protected $nullable = false;
+    use FormValidatorTrait,
+        NullableTrait;
 
     /**
      * @return string|LocalisationString|LocalisationChoiceString
      */
     abstract protected function getDefaultErrorText();
-    abstract protected function check();
+    abstract protected function doCheck();
 
     /**
      * @param bool $nullable
@@ -28,25 +28,10 @@ abstract class BaseFormValidator extends AbstractDataValueManager implements Val
         $this->setNullable($nullable);
     }
 
-    public function isNullable(): bool
-    {
-        return $this->nullable;
-    }
-
-    /**
-     * @param bool $nullable
-     * @return $this
-     */
-    public function setNullable(bool $nullable)
-    {
-        $this->nullable = $nullable;
-        return $this;
-    }
-
-    public function process()
+    public function check()
     {
         if (!($this->isNullable() && is_null($this->getValue()))) {
-            $this->check();
+            $this->doCheck();
         }
     }
 

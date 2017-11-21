@@ -3,13 +3,24 @@
 namespace Main\Form\Converter;
 
 use Main\Form\AbstractDataValueManager;
+use Main\Form\NullableTrait;
 
 abstract class BaseConverter extends AbstractDataValueManager
 {
-    abstract public function convert();
+    use NullableTrait;
 
-    public function __construct($value = null)
+    abstract protected function doConvert();
+
+    public function __construct(bool $nullable = false)
     {
-        $this->setValue($value);
+        $this->setNullable($nullable);
+    }
+
+    public function convert()
+    {
+        if ($this->isNullable() && is_null($this->getValue())) {
+            return null;
+        }
+        return $this->doConvert();
     }
 }
