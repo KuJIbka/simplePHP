@@ -2,11 +2,9 @@
 
 namespace Main\Form;
 
-abstract class AbstractDataValueManager implements DataManager
+abstract class AbstractDataValueManager
 {
     protected $value;
-
-    abstract public function execute();
 
     /**
      * @return mixed

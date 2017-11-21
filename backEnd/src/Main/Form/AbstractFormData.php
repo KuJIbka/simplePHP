@@ -9,7 +9,7 @@ use Main\Service\TranslationsService;
 use Main\Struct\LocalisationChoiceString;
 use Main\Struct\LocalisationString;
 
-abstract class AbstractFormData implements DataManager, ValidatorInterface
+abstract class AbstractFormData implements ValidatorInterface
 {
     use FormValidatorTrait;
 
@@ -59,16 +59,11 @@ abstract class AbstractFormData implements DataManager, ValidatorInterface
     }
 
     /**
-     * @return string[]|LocalisationString[]|LocalisationChoiceString[] $error
+     * @return string[]|LocalisationString[]|LocalisationChoiceString[]
      */
     public function getErrors()
     {
         return $this->errors;
-    }
-
-    public function getError()
-    {
-        return null;
     }
 
     public function isValid(): bool

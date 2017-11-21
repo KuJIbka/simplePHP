@@ -10,33 +10,48 @@ abstract class BaseFormValidator extends AbstractDataValueManager implements Val
 {
     use FormValidatorTrait;
 
-    /**
-     * @var string|LocalisationString|LocalisationChoiceString
-     */
-    protected $error;
-
-    /**
-     * @var string|LocalisationString|LocalisationChoiceString
-     */
-    protected $customError = '';
+    protected $nullable = false;
 
     /**
      * @return string|LocalisationString|LocalisationChoiceString
      */
     abstract protected function getDefaultErrorText();
+    abstract protected function check();
 
     /**
+     * @param bool $nullable
      * @param string|LocalisationString|LocalisationChoiceString $customError
-     * @param mixed $value
      */
-    public function __construct($customError = null, $value = null)
+    public function __construct(bool $nullable = false, $customError = '')
     {
-        $this->setValue($value);
         $this->setCustomError($customError);
+        $this->setNullable($nullable);
+    }
+
+    public function isNullable(): bool
+    {
+        return $this->nullable;
     }
 
     /**
-     * {@inheritdoc}
+     * @param bool $nullable
+     * @return $this
+     */
+    public function setNullable(bool $nullable)
+    {
+        $this->nullable = $nullable;
+        return $this;
+    }
+
+    public function process()
+    {
+        if (!($this->isNullable() && is_null($this->getValue()))) {
+            $this->check();
+        }
+    }
+
+    /**
+     * @return $this
      */
     public function bindError()
     {

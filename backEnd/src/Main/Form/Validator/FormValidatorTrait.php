@@ -5,9 +5,6 @@ namespace Main\Form\Validator;
 use Main\Struct\LocalisationChoiceString;
 use Main\Struct\LocalisationString;
 
-/**
- * @method string|LocalisationString|LocalisationChoiceString getDefaultErrorText()
- */
 trait FormValidatorTrait
 {
     /**
@@ -39,6 +36,14 @@ trait FormValidatorTrait
     }
 
     /**
+     * @return string|LocalisationString|LocalisationChoiceString
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
      * @param string|LocalisationString|LocalisationChoiceString $error
      * @return $this
      */
@@ -46,19 +51,6 @@ trait FormValidatorTrait
     {
         $this->error = $error;
         return $this;
-    }
-
-    public function isValid(): bool
-    {
-        return is_null($this->error);
-    }
-
-    /**
-     * @return string|LocalisationString|LocalisationChoiceString
-     */
-    public function getError()
-    {
-        return $this->error;
     }
 
     /**
@@ -70,16 +62,8 @@ trait FormValidatorTrait
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function bindError()
+    public function isValid(): bool
     {
-        if ($this->customError !== '') {
-            $this->setError($this->customError);
-        } else {
-            $this->setError($this->getDefaultErrorText());
-        }
-        return $this;
+        return is_null($this->error);
     }
 }

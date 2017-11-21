@@ -7,18 +7,17 @@ use Main\Form\Validator\BaseFormValidator;
 use Main\Form\Validator\FormValidatorTrait;
 use Main\Form\Validator\ValidatorInterface;
 
-class RuleContainer extends BaseFormValidator implements ValidatorInterface
+class RuleContainer extends AbstractDataValueManager implements ValidatorInterface
 {
     use FormValidatorTrait;
 
     /** @var AbstractDataValueManager[] */
-    protected $rules;
+    protected $rules = [];
     protected $key = '';
 
-    public function __construct(array $rules = [], $customError = '', $value = null, $key = '')
+    public function __construct(array $rules = [], $customError = '')
     {
-        parent::__construct($customError, $value);
-        $this->setKey($key);
+        $this->setCustomError($customError);
         $this->setRules($rules);
     }
 
@@ -30,9 +29,14 @@ class RuleContainer extends BaseFormValidator implements ValidatorInterface
         return $this->rules;
     }
 
+    /**
+     * @param AbstractDataValueManager[] $rules
+     * @return $this
+     */
     public function setRules(array $rules)
     {
         $this->rules = $rules;
+        return $this;
     }
 
     /**
@@ -45,6 +49,7 @@ class RuleContainer extends BaseFormValidator implements ValidatorInterface
 
     /**
      * @param string $key
+     * @return $this
      */
     public function setKey($key)
     {
@@ -57,21 +62,20 @@ class RuleContainer extends BaseFormValidator implements ValidatorInterface
         $filteredValue = $this->getValue();
         if (is_array($filteredValue)) {
             foreach ($filteredValue as $k => $v) {
+                echo "\n";
                 $wasError = false;
                 foreach ($this->getRules() as $rule) {
                     $rule->setValue($v);
-                    if ($rule instanceof ValidatorInterface) {
-                        $rule->setCustomError($this->getCustomError());
-                    }
-
-                    $newVal = $rule->execute();
                     if ($rule instanceof BaseConverter) {
-                        $v = $newVal;
-                    }
-                    if ($rule instanceof ValidatorInterface && !$rule->isValid()) {
-                        $this->setError($rule->getError());
-                        $wasError = true;
-                        break;
+                        $v = $rule->convert();
+                    } elseif ($rule instanceof BaseFormValidator) {
+                        $rule->setCustomError($this->getCustomError());
+                        $rule->process();
+                        if (!$rule->isValid()) {
+                            $this->setError($rule->getError());
+                            $wasError = true;
+                            break;
+                        }
                     }
                 }
                 if ($wasError) {
@@ -83,25 +87,19 @@ class RuleContainer extends BaseFormValidator implements ValidatorInterface
         } else {
             foreach ($this->getRules() as $rule) {
                 $rule->setValue($filteredValue);
-                if ($rule instanceof ValidatorInterface) {
-                    $rule->setCustomError($this->getCustomError());
-                }
-
-                $newVal = $rule->execute();
                 if ($rule instanceof BaseConverter) {
-                    $filteredValue = $newVal;
+                    $filteredValue = $rule->convert();
                 }
-                if ($rule instanceof ValidatorInterface && !$rule->isValid()) {
-                    $this->setError($rule->getError());
-                    break;
+                if ($rule instanceof BaseFormValidator) {
+                    $rule->setCustomError($this->getCustomError());
+                    $rule->process();
+                    if (!$rule->isValid()) {
+                        $this->setError($rule->getError());
+                        break;
+                    }
                 }
             }
         }
         return $filteredValue;
-    }
-
-    public function getDefaultErrorText(): string
-    {
-        return '';
     }
 }

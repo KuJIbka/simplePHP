@@ -4,7 +4,7 @@ namespace Main\Form\Converter;
 
 class ToId extends BaseConverter
 {
-    public function execute()
+    public function convert()
     {
         $id = $this->getValue();
         if (is_numeric($id)) {

@@ -63,7 +63,7 @@ class DB extends AbstractSingleton
     }
 
     /**
-     * @return UserRepository|EntityRepository
+     * @return UserLimitRepository|EntityRepository
      */
     public function getUserLimitRepository(): UserLimitRepository
     {

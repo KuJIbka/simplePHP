@@ -1,12 +1,10 @@
 <?php
 
-namespace Form\Converter;
-
-use Main\Form\Converter\BaseConverter;
+namespace Main\Form\Converter;
 
 class ToEmail extends BaseConverter
 {
-    public function execute()
+    public function convert()
     {
         # Make not valid if using '
         $email = preg_replace("/['*!{}<>#%;:?=\/`~|]/", '"', $this->getValue());

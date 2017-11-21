@@ -4,8 +4,8 @@ namespace Main\Form\Converter;
 
 class Trim extends BaseConverter
 {
-    public function execute()
+    public function convert()
     {
-        return trim($this->getValue());
+        return is_null($this->getValue()) ? null : trim($this->getValue());
     }
 }

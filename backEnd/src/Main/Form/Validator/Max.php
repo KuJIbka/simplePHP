@@ -2,7 +2,6 @@
 
 namespace Main\Form\Validator;
 
-use Main\Exception\BaseException;
 use Main\Struct\LocalisationChoiceString;
 use Main\Struct\LocalisationString;
 
@@ -10,16 +9,13 @@ class Max extends BaseFormValidator
 {
     protected $max;
 
-    public function __construct($max, $customError = null, $value = null)
+    public function __construct(float $max, bool $nullable = false, $customError = null)
     {
-        parent::__construct($customError, $value);
-        if (!is_numeric($max)) {
-            new BaseException('Min value of form validator must be numeric');
-        }
+        parent::__construct($nullable, $customError);
         $this->setMax($max);
     }
 
-    public function execute()
+    public function check()
     {
         if ($this->getValue() > $this->getMax() || is_null($this->getValue())) {
             $this->bindError();

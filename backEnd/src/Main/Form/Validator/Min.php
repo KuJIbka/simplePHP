@@ -2,7 +2,6 @@
 
 namespace Main\Form\Validator;
 
-use Main\Exception\BaseException;
 use Main\Struct\LocalisationChoiceString;
 use Main\Struct\LocalisationString;
 
@@ -10,16 +9,13 @@ class Min extends BaseFormValidator
 {
     protected $min;
 
-    public function __construct($min, $customError = null, $value = null)
+    public function __construct(float $min, bool $nullable = false, $customError = null)
     {
-        parent::__construct($customError, $value);
-        if (!is_numeric($min)) {
-            new BaseException('Min value of form validator must be numeric');
-        }
+        parent::__construct($nullable, $customError);
         $this->setMin($min);
     }
 
-    public function execute()
+    public function check()
     {
         if ($this->getValue() < $this->getMin()) {
             $this->bindError();

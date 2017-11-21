@@ -3,7 +3,6 @@
 namespace Main\Controller;
 
 use Doctrine\DBAL\LockMode;
-use Main\Exception\BaseFormDataException;
 use Main\Form\Data\LoginFormData;
 use Main\Exception\WrongData;
 use Main\Factory\ResponseFactory;
@@ -16,22 +15,21 @@ class AuthController extends BaseController
     public function login()
     {
         $sessionManager = SessionManager::get();
-        if ($sessionManager->isLogged()) {
-            throw new WrongData();
-        }
-        $data = new LoginFormData($_POST);
-        if (!$data->isValid()) {
-            throw (new BaseFormDataException())->setFormDataErrors($data->getTranslatedErrorsData());
-        }
-        $login = $data->getLogin();
-        $password = $data->getPassword();
-        $userRepository = DB::get()->getUserRepository();
-        $userLimitRepository = DB::get()->getUserLimitRepository();
         $responseData = new DefaultResponseData(
             ResponseFactory::RESP_TYPE_ERROR,
             'L_ERROR_BAD_COMBINATION_OF_ACCOUNT_DATA'
         );
         try {
+            if ($sessionManager->isLogged()) {
+                throw new WrongData();
+            }
+            $data = new LoginFormData($_POST);
+            $data->isValidWithThrowException();
+            $login = $data->getLogin();
+            $password = $data->getPassword();
+            $userRepository = DB::get()->getUserRepository();
+            $userLimitRepository = DB::get()->getUserLimitRepository();
+
             DB::get()->getEm()->beginTransaction();
             $user = $userRepository->findByLogin($login);
             if ($user) {

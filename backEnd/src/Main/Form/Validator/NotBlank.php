@@ -6,7 +6,7 @@ use Main\Struct\LocalisationString;
 
 class NotBlank extends BaseFormValidator
 {
-    public function execute()
+    public function check()
     {
         if (is_null($this->getValue()) || $this->getValue() === '') {
             $this->bindError();
