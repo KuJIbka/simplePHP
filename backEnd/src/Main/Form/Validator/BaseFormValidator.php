@@ -3,14 +3,14 @@
 namespace Main\Form\Validator;
 
 use Main\Form\AbstractDataValueManager;
-use Main\Form\NullableTrait;
+use Main\Form\CanBeEmptyTrait;
 use Main\Struct\LocalisationChoiceString;
 use Main\Struct\LocalisationString;
 
 abstract class BaseFormValidator extends AbstractDataValueManager implements ValidatorInterface
 {
     use FormValidatorTrait,
-        NullableTrait;
+        CanBeEmptyTrait;
 
     /**
      * @return string|LocalisationString|LocalisationChoiceString
@@ -19,18 +19,18 @@ abstract class BaseFormValidator extends AbstractDataValueManager implements Val
     abstract protected function doCheck();
 
     /**
-     * @param bool $nullable
+     * @param bool $canBeEmpty
      * @param string|LocalisationString|LocalisationChoiceString $customError
      */
-    public function __construct(bool $nullable = false, $customError = '')
+    public function __construct(bool $canBeEmpty = false, $customError = '')
     {
         $this->setCustomError($customError);
-        $this->setNullable($nullable);
+        $this->setCanBeEmpty($canBeEmpty);
     }
 
     public function check()
     {
-        if (!($this->isNullable() && (is_null($this->getValue()) || $this->getValue() === ''))) {
+        if (!($this->isCanBeEmpty() && (is_null($this->getValue()) || $this->getValue() === ''))) {
             $this->doCheck();
         }
     }

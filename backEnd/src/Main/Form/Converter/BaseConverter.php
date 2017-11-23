@@ -3,22 +3,22 @@
 namespace Main\Form\Converter;
 
 use Main\Form\AbstractDataValueManager;
-use Main\Form\NullableTrait;
+use Main\Form\CanBeEmptyTrait;
 
 abstract class BaseConverter extends AbstractDataValueManager
 {
-    use NullableTrait;
+    use CanBeEmptyTrait;
 
     abstract protected function doConvert();
 
-    public function __construct(bool $nullable = false)
+    public function __construct(bool $canBeEmpty = false)
     {
-        $this->setNullable($nullable);
+        $this->setCanBeEmpty($canBeEmpty);
     }
 
     public function convert()
     {
-        if ($this->isNullable() && (is_null($this->getValue()) || $this->getValue() === '')) {
+        if ($this->isCanBeEmpty() && (is_null($this->getValue()) || $this->getValue() === '')) {
             return null;
         }
         return $this->doConvert();
