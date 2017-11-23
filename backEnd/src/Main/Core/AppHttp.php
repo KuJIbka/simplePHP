@@ -6,6 +6,7 @@ use Main\Exception\BaseException;
 use Main\Exception\CommonFatalError;
 use Main\Factory\ResponseFactory;
 use Main\Service\Config;
+use Main\Service\DB;
 use Main\Service\Session\SessionManager;
 use Main\Service\TranslationsService;
 use Sabre\HTTP\Response;
@@ -34,6 +35,7 @@ class AppHttp extends App
                 echo $response;
             }
         } catch (\Exception $e) {
+            DB::get()->getEm()->getConnection()->isTransactionActive() && DB::get()->getEm()->rollback();
             $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']);
             if ($e instanceof BaseException) {
                 $response = ResponseFactory::exceptionToResponse($e, $isAjax);

@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <title>{% block title %}Welcome!{% endblock %}</title>
-    <script src="/js/JQ.js"></script>
-    <script src="/js/main.js"></script>
-    <script src="/js/translator.min.js"></script>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> -->
+    {% block preloadJavascript %}{% endblock %}
     {% block stylesheets %}
     {% endblock %}
 </head>

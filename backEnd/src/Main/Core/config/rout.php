@@ -2,8 +2,9 @@
 
 return [
     '/' => 'Main\Controller\MainController:index',
-    '/auth/login' => "Main\Controller\AuthController:login",
-    '/auth/logout' => "Main\Controller\AuthController:logout",
+    '/auth/login' => 'Main\Controller\AuthController:login',
+    '/auth/logout' => 'Main\Controller\AuthController:logout',
+    '/auth/getUserSettings' => 'Main\Controller\AuthController:getUserSettings',
     '/in' => 'Main\Controller\MainController:in',
 
     '/testSession' => 'Main\Controller\TestController:testSession',

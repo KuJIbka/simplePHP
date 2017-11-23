@@ -15,7 +15,7 @@ class MaxLength extends BaseFormValidator
         $this->setMaxLength($maxLength);
     }
 
-    public function check()
+    public function doCheck()
     {
         if (mb_strlen($this->getValue()) > $this->getMaxLength() || is_null($this->getValue())) {
             $this->bindError();

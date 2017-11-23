@@ -5,7 +5,7 @@ namespace Main\Entity;
 /**
  * @Entity(repositoryClass="Main\Repository\UserRepository") @Table(name="users")
  */
-class User
+class User implements \JsonSerializable
 {
     /**
      * @Id
@@ -93,5 +93,14 @@ class User
     {
         $this->login = $login;
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'login' => $this->getLogin(),
+        ];
     }
 }

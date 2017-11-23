@@ -3,6 +3,7 @@
 namespace Main\Controller;
 
 use Doctrine\DBAL\LockMode;
+use Main\Exception\BaseException;
 use Main\Form\Data\LoginFormData;
 use Main\Exception\WrongData;
 use Main\Factory\ResponseFactory;
@@ -19,6 +20,7 @@ class AuthController extends BaseController
             ResponseFactory::RESP_TYPE_ERROR,
             'L_ERROR_BAD_COMBINATION_OF_ACCOUNT_DATA'
         );
+        $resp = ResponseFactory::getJsonResponse($responseData);
         try {
             if ($sessionManager->isLogged()) {
                 throw new WrongData();
@@ -46,28 +48,40 @@ class AuthController extends BaseController
                         $responseData = new DefaultResponseData(
                             ResponseFactory::RESP_TYPE_SUCCESS,
                             '',
-                            '/in'
+                            '/in',
+                            [ 'userData' => $user ]
                         );
+                        $resp = ResponseFactory::getJsonResponse($responseData);
                     }
                     DB::get()->getEm()->flush();
                     DB::get()->getEm()->commit();
                 }
             }
-        } catch (\Exception $e) {
+        } catch (BaseException $e) {
             DB::get()->getEm()->getConnection()->isTransactionActive() && DB::get()->getEm()->rollback();
+            $resp = ResponseFactory::exceptionToResponse($e);
         }
-        return ResponseFactory::getJsonResponse($responseData);
+        return $resp;
     }
 
     public function logout()
     {
         SessionManager::get()->open();
         SessionManager::get()->regenerateId(true);
+        SessionManager::get()->destroySession();
         SessionManager::get()->close();
         return ResponseFactory::getJsonResponse(new DefaultResponseData(
             ResponseFactory::RESP_TYPE_SUCCESS,
             '',
             '/'
         ));
+    }
+
+    public function getUserSettings()
+    {
+        return ResponseFactory::getCommonSuccessResponse(
+            [ 'userData' => SessionManager::get()->getLoggedUser() ],
+            ''
+        );
     }
 }

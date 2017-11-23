@@ -1,0 +1,13 @@
+@import "../node_modules/react-block-ui/style.css";
+
+.loading-bullet {
+   color: #c9e7dd;
+ }
+.block-ui-overlay {
+  &__hidden-overlay {
+    .block-ui-overlay {
+      opacity: 0;
+      filter: alpha(opacity=0);
+    }
+  }
+}

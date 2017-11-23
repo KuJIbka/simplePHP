@@ -15,7 +15,7 @@ class Max extends BaseFormValidator
         $this->setMax($max);
     }
 
-    public function check()
+    public function doCheck()
     {
         if ($this->getValue() > $this->getMax() || is_null($this->getValue())) {
             $this->bindError();

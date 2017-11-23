@@ -11,7 +11,7 @@ class MainController extends BaseController
     {
         DB::get()->getEm()->beginTransaction();
         try {
-            return $this->render("main.html.twig");
+            return $this->render("react.html.twig");
         } catch (BaseException $e) {
             return $e->getMessage();
         }

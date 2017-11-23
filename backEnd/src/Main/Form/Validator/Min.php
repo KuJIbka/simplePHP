@@ -15,7 +15,7 @@ class Min extends BaseFormValidator
         $this->setMin($min);
     }
 
-    public function check()
+    public function doCheck()
     {
         if ($this->getValue() < $this->getMin()) {
             $this->bindError();

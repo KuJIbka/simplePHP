@@ -1,5 +1,11 @@
 {% extends 'base.html.twig' %}
 
+{% block preloadJavascript %}
+    <script src="/js/JQ.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/translator.min.js"></script>
+{% endblock %}
+
 {% block body %}
     YOU ARE IN the secret area!!! {{ user.login }} !!!<br />
     <button class="jsLogout">LOGOUT</button>

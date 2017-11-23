@@ -7,7 +7,7 @@ use Main\Struct\LocalisationString;
 
 class DateFormatString extends BaseFormValidator
 {
-    public function check()
+    public function doCheck()
     {
         if (!preg_match('/^\d\d[-\/\.]\d\d[-\/\.]\d\d\d\d$/', $this->getValue())) {
             $this->bindError();
