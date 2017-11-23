@@ -30,7 +30,7 @@ abstract class BaseFormValidator extends AbstractDataValueManager implements Val
 
     public function check()
     {
-        if (!($this->isNullable() && is_null($this->getValue()))) {
+        if (!($this->isNullable() && (is_null($this->getValue()) || $this->getValue() === ''))) {
             $this->doCheck();
         }
     }

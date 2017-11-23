@@ -6,6 +6,6 @@ class Trim extends BaseConverter
 {
     public function doConvert()
     {
-        return is_null($this->getValue()) ? null : trim($this->getValue());
+        return trim($this->getValue());
     }
 }
