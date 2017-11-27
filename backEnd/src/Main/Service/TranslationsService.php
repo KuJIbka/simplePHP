@@ -26,7 +26,7 @@ class TranslationsService extends AbstractSingleton
         $this->translator = new ExpandTranslator('ru_RU', new MessageSelector());
         $this->translator->addLoader('php', new PhpFileLoader());
         $this->translator->setLocale(Config::get()->getParam('language_default'));
-        $this->loadFromPath(PATH_LANGS.DIRECTORY_SEPARATOR);
+        $this->loadFromPath(PATH_LANGS.DS);
     }
 
     public function loadFromPath(string $path)

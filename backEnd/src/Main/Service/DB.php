@@ -37,7 +37,7 @@ class DB extends AbstractSingleton
         $doctrineConfig = Setup::createAnnotationMetadataConfiguration(
             $doctrinePaths,
             $isDebug,
-            PATH_ROOT.DIRECTORY_SEPARATOR.'Core'.DIRECTORY_SEPARATOR.'proxies',
+            PATH_ROOT.DS.'Core'.DS.'proxies',
             CacheDriver::get()->getCacheDriver()
         );
         $doctrineConfig->setNamingStrategy(new UnderscoreNamingStrategy());

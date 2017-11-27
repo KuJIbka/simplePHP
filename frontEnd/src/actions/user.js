@@ -50,6 +50,7 @@ function logoutRequestSuccess() {
     };
 }
 
+
 export function getUserSettingsRequest() {
     return (dispatch) => {
         dispatch(getUserSettingsSend());

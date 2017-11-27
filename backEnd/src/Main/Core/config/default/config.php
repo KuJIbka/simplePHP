@@ -13,7 +13,7 @@ return [
     'db_password' => '',
 
     'migrations' => [
-        'dir' => PATH_ROOT.DIRECTORY_SEPARATOR.'Migrations',
+        'dir' => PATH_ROOT.DS.'Migrations',
         'namespace' => 'Main\\Migrations',
     ],
     'loginCountMax' => 3,

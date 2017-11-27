@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import Login from 'component/Login';
 import Loading from 'component/Loading';
+import Noty from 'component/Noty';
 
 import { getUserSettingsRequest } from 'actions/user';
 
@@ -43,6 +44,8 @@ class Interface extends React.Component {
                         }
                     }
                 })() }
+
+                <Noty />
             </div>
         );
     }

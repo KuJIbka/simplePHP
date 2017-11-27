@@ -1,5 +1,5 @@
 let webpack = require("webpack");
-
+let UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 let config = require('./webpack.config.base.js');
 
 config.plugins.push(new webpack.DefinePlugin({
@@ -8,11 +8,12 @@ config.plugins.push(new webpack.DefinePlugin({
     },
     __DEVELOPMENT__: false
 }));
-config.plugins.push(new webpack.optimize.UglifyJsPlugin({
-    minimize: true,
-    comments: false,
-    compress: {
-        warnings: false,
-    }
+config.plugins.push(new UglifyJSPlugin({
+    sourceMap: true,
+    parallel: true,
+    uglifyOptions: {
+        ecma: 8,
+        warnings: false
+    },
 }));
 module.exports = config;

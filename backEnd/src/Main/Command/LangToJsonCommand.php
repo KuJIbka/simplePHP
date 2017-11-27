@@ -26,11 +26,11 @@ class LangToJsonCommand extends Command
         $translationService = TranslationsService::get();
         foreach ($translationService->getAvailableLangs() as $lang) {
             $langJsonName = $lang.'.json';
-            $langPublicPath = PATH_PUBLIC.DIRECTORY_SEPARATOR.'lang';
+            $langPublicPath = PATH_PUBLIC.DS.'lang';
             if (!is_dir($langPublicPath)) {
                 mkdir($langPublicPath);
             }
-            $langPublicPath .= DIRECTORY_SEPARATOR;
+            $langPublicPath .= DS;
             $fd = fopen($langPublicPath.$langJsonName, 'w') or die('не удалось создать файл '.$langJsonName);
             $defaultDomain = 'messages';
             $forBazingaJs = [

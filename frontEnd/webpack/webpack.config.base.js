@@ -57,16 +57,13 @@ module.exports = {
                         },
                         {
                             loader: "sass-loader",
-                            options: {
-                                plugins: () => [require('autoprefixer')]
-                            }
                         },
                     ],
                     fallback: "style-loader"
                 })
             },
             {
-                test: /.\css$/,
+                test: /\.css$/,
                 use: ExtractTextPlugin.extract({
                     fallback: "style-loader",
                     use: "css-loader"
@@ -75,20 +72,12 @@ module.exports = {
         ]
     },
     plugins: [
-        // new webpack.ProvidePlugin({
-        //     $: "jquery",
-        //     jQuery: "jquery",
-        //     "window.jQuery": "jquery",
-        //     "window.$": "jquery"
-        // }),
-        //new webpack.optimize.UglifyJsPlugin({minimize: true}),
-        // new webpack.LoaderOptionsPlugin({
-        //     options: {
-        //         postcss: [
-        //             autoprefixer({browsers: ['last 2 versions']})
-        //         ]
-        //     }
-        // }),
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+            "window.jQuery": "jquery",
+            "window.$": "jquery"
+        }),
         new ExtractTextPlugin({
             filename: "./css/[name].css",
             allChunks: true

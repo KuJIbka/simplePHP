@@ -1,4 +1,5 @@
 import History from 'services/History';
+import Notify from 'services/Notify';
 
 class Http {
     request(method, url, data, headers = {}) {
@@ -15,6 +16,9 @@ class Http {
         return fetch(url, options).then((resp) => {
             return resp.json();
         }).then((resp) => {
+            if (resp.text) {
+                Notify.app_noty(resp.type, null, resp.text);
+            }
             if (resp.moveTo) {
                 if (resp.text) {
                     setTimeout(() => {
@@ -64,14 +68,18 @@ class Http {
             return anyFormatData;
         }
         let fData = [];
-        if (anyFormatData instanceof Array) {
+        if (anyFormatData instanceof FormData || anyFormatData instanceof Map) {
+            anyFormatData.forEach((el, key) => {
+                 fData.push(encodeURIComponent(key) + '=' + encodeURIComponent(el));
+            });
+        } else if (anyFormatData instanceof Array) {
             for (let k in anyFormatData) {
-                fData[k] = encodeURIComponent(anyFormatData[k].name) + '=' + encodeURIComponent(anyFormatData[k].value);
+                fData.push(encodeURIComponent(anyFormatData[k].name) + '=' + encodeURIComponent(anyFormatData[k].value));
             }
         } else if (typeof anyFormatData === 'object') {
             for (let k in anyFormatData) {
                 if (anyFormatData.hasOwnProperty(k)) {
-                    fData[k] = encodeURIComponent(k) + '=' + encodeURIComponent(anyFormatData[k]);
+                    fData.push(encodeURIComponent(k) + '=' + encodeURIComponent(anyFormatData[k]));
                 }
             }
         }
