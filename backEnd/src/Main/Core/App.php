@@ -8,6 +8,9 @@ abstract class App
 {
     public function __construct()
     {
+        ini_set('precision', 14);
+        ini_set('serialize_precision', -1);
+
         require_once __DIR__ . '/defines.php';
         Config::get()->loadFromPath(PATH_CONFIG.'/default');
         Config::get()->loadFromPath(PATH_CONFIG.'/prod');
