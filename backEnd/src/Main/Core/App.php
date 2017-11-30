@@ -6,6 +6,10 @@ use Main\Service\Config;
 
 abstract class App
 {
+    /**
+     * App constructor.
+     * @throws \Exception
+     */
     public function __construct()
     {
         ini_set('precision', 14);

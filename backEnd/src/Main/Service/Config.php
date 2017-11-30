@@ -19,6 +19,11 @@ class Config
         return self::$inst;
     }
 
+    /**
+     * @param string $path
+     * @return $this
+     * @throws \Exception
+     */
     public function loadFromPath(string $path)
     {
         if (is_dir($path)) {
@@ -36,6 +41,10 @@ class Config
         return $this;
     }
 
+    /**
+     * @param $filePath
+     * @throws \Exception
+     */
     public function loadFromFile($filePath)
     {
         if (!file_exists($filePath)) {
