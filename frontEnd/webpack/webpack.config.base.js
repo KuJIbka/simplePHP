@@ -97,8 +97,8 @@ module.exports = {
         ])
     ],
     output: {
-        path: path.resolve(__dirname, '../../web/static/'),
-        publicPath: "/static/",
+        path: path.resolve(__dirname, '../../web/build/'),
+        publicPath: "/build/",
         filename: "./js/[name].js"
     }
 };
