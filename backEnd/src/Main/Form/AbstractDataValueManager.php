@@ -16,6 +16,7 @@ abstract class AbstractDataValueManager
 
     /**
      * @param mixed $value
+     * @return $this
      */
     public function setValue($value)
     {

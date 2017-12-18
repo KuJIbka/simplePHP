@@ -61,8 +61,9 @@ class ExpandTranslator extends Translator
 
     /**
      * @param String|LocalisationString|LocalisationChoiceString $localisationString
+     * @return string
      */
-    public function transLocalisationString($localisationString)
+    public function transLocalisationString($localisationString): string
     {
         if ($localisationString instanceof LocalisationChoiceString) {
             return $this->transChoice($localisationString);

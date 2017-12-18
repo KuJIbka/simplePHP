@@ -18,6 +18,9 @@ class AppHttp extends App
     /** @var Router */
     protected $router;
 
+    /**
+     * @throws \Exception
+     */
     public function __construct()
     {
         parent::__construct();

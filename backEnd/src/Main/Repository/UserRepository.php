@@ -5,6 +5,7 @@ namespace Main\Repository;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Andx;
+use Doctrine\ORM\TransactionRequiredException;
 use Main\Exception\UserNotFound;
 use Main\Entity\User;
 use Main\Filter\UserFilter;
@@ -23,6 +24,11 @@ class UserRepository extends EntityRepository
     const CN_PASSWORD = 'password';
     const CN_BALANCE = 'balance';
 
+    /**
+     * @param int $id
+     * @return User|null
+     * @throws UserNotFound
+     */
     public function getById(int $id): ?User
     {
         $user = $this->find($id);
@@ -44,6 +50,8 @@ class UserRepository extends EntityRepository
      * @param int|null $start
      * @param int|null $count
      * @return User[]
+     *
+     * @throws TransactionRequiredException
      */
     public function findByFilter(UserFilter $filter, $start, $count)
     {
@@ -62,11 +70,7 @@ class UserRepository extends EntityRepository
         return $q->getResult();
     }
 
-    /**
-     * @param UserFilter $filter
-     * @param string $alias
-     */
-    public function getExprByFilter(UserFilter $filter, $alias): AndX
+    public function getExprByFilter(UserFilter $filter, string $alias): AndX
     {
         $qb = $this->createQueryBuilder($alias);
         $andX = $qb->expr()->andX();

@@ -18,7 +18,13 @@ class UserService extends AbstractSingleton
         return password_hash($password, PASSWORD_BCRYPT, [ 'cost' => 10 ]);
     }
 
-    public function addNewUser($login, $password)
+    /**
+     * @param string $login
+     * @param string $password
+     * @return User
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function addNewUser(string $login, string $password): User
     {
         $user = (new User())->setLogin($login)->setPassword($password);
         DB::get()->getEm()->persist($user);
@@ -29,6 +35,10 @@ class UserService extends AbstractSingleton
         return $user;
     }
 
+    /**
+     * @param User $user
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     public function removeUser(User $user)
     {
         $userLimit = $user->getUserLimit();

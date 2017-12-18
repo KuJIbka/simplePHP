@@ -5,7 +5,6 @@ namespace Main\Service;
 use Main\Utils\AbstractSingleton;
 use Symfony\Component\Translation\Formatter\MessageFormatter;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
-use Symfony\Component\Translation\MessageSelector;
 
 /**
 * @method static TranslationsService get()
@@ -22,6 +21,9 @@ class TranslationsService extends AbstractSingleton
      */
     protected $translator;
 
+    /**
+     * @throws \Exception
+     */
     protected function init()
     {
         $defaultLang = Config::get()->getParam('language_default_lang');
@@ -37,6 +39,11 @@ class TranslationsService extends AbstractSingleton
         }
     }
 
+    /**
+     * @param string $path
+     * @return $this
+     * @throws \Exception
+     */
     public function loadFromPath(string $path)
     {
         if (is_dir($path)) {
@@ -54,6 +61,10 @@ class TranslationsService extends AbstractSingleton
         return $this;
     }
 
+    /**
+     * @param string $filePath
+     * @throws \Exception
+     */
     public function loadFromFile(string $filePath)
     {
         if (!file_exists($filePath)) {

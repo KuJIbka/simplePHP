@@ -33,12 +33,20 @@ abstract class AbstractFormData implements ValidatorInterface
      */
     abstract protected function getRules(): array;
 
-    public function __construct(array $data, $checkCsrfToken = false)
+    /**
+     * @param array $data
+     * @param bool $checkCsrfToken
+     * @throws \Exception
+     */
+    public function __construct(array $data, bool $checkCsrfToken = false)
     {
         $this->sourceData = $data;
         $this->execute();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function execute()
     {
         foreach ($this->getRules() as $param => $ruleContainer) {
@@ -71,6 +79,9 @@ abstract class AbstractFormData implements ValidatorInterface
         return empty($this->errors);
     }
 
+    /**
+     * @throws BaseFormDataException
+     */
     public function isValidWithThrowException()
     {
         if (!$this->isValid()) {

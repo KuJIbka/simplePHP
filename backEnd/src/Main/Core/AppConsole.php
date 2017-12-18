@@ -18,6 +18,9 @@ class AppConsole extends App
     /** @var Application */
     protected $symfonyApp;
 
+    /**
+     * @throws \Exception
+     */
     public function __construct()
     {
         parent::__construct();
@@ -59,6 +62,15 @@ class AppConsole extends App
 
     public function run()
     {
-        $this->symfonyApp->run();
+        try {
+            $this->symfonyApp->run();
+        } catch (\Exception $e) {
+            echo "Error found ".$e->getMessage();
+            if (Config::get()->getParam('debug')) {
+                echo "\n";
+                echo "File: ".$e->getFile()."\n";
+                echo "Line: ".$e->getLine();
+            }
+        }
     }
 }
