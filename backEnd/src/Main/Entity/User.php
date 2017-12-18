@@ -9,22 +9,25 @@ class User implements \JsonSerializable
 {
     /**
      * @Id
-     * @Column(type="integer", nullable=false, options={"unsigned": true} )
+     * @Column(type="integer", nullable=false, options={"unsigned": true})
      * @GeneratedValue(strategy="AUTO")
      */
     private $id;
 
-    /** @Column(type="string", length=30, nullable=false ) */
+    /** @Column(type="string", length=30, nullable=false) */
     private $name = '';
 
-    /** @Column(type="string", length=20, nullable=false, unique=true ) */
+    /** @Column(type="string", length=20, nullable=false, unique=true) */
     private $login = '';
 
-    /** @Column(type="string", length=255, nullable=false ) */
+    /** @Column(type="string", length=255, nullable=false) */
     private $password = '';
 
-    /** @Column(type="decimal", precision=8, scale=2, nullable=false ) */
+    /** @Column(type="decimal", precision=8, scale=2, nullable=false) */
     private $balance = 0.0;
+
+    /** @Column(type="string", length=3, nullable=false) */
+    private $lang = '';
 
     /** @OneToOne(targetEntity="UserLimit", mappedBy="user") */
     private $userLimit;
@@ -95,12 +98,24 @@ class User implements \JsonSerializable
         return $this;
     }
 
+    public function getLang(): string
+    {
+        return $this->lang;
+    }
+
+    public function setLang(string $lang): self
+    {
+        $this->lang = $lang;
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
             'login' => $this->getLogin(),
+            'lang' => $this->getLang(),
         ];
     }
 }

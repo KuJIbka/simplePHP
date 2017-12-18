@@ -5,3 +5,4 @@
 /frontEnd/node_modules/
 /backEnd/composer.lock
 /frontEnd/package-lock.json
+/web/build/

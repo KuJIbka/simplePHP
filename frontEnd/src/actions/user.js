@@ -3,7 +3,7 @@ import Http from 'services/Http';
 export function authRequest(data) {
     return (dispatch) => {
         dispatch(authRequestSend());
-        return Http.post('/auth/login', data).then((resp) => {
+        return Http.post(Http.getLocalizedUrl('/auth/login'), data).then((resp) => {
             if (resp.type === 'success') {
                 dispatch(authRequestSuccess(resp.data.userData));
             }
@@ -29,7 +29,7 @@ function authRequestSuccess(data) {
 export function logoutRequest() {
     return (dispatch) => {
         dispatch(logoutRequestSend());
-        return Http.post('/auth/logout').then((resp) => {
+        return Http.post(Http.getLocalizedUrl('/auth/logout')).then((resp) => {
             if (resp.type === 'success') {
                 dispatch(logoutRequestSuccess());
                 return resp;
@@ -54,7 +54,7 @@ function logoutRequestSuccess() {
 export function getUserSettingsRequest() {
     return (dispatch) => {
         dispatch(getUserSettingsSend());
-        return Http.get('/auth/getUserSettings').then((resp) => {
+        return Http.get(Http.getLocalizedUrl('/auth/getUserSettings')).then((resp) => {
             if (resp.type === 'success') {
                 dispatch(getUserSettingsSuccess(resp.data.userData));
                 return resp;

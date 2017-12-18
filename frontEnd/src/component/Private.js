@@ -15,7 +15,7 @@ class Private extends React.Component {
     render() {
         return (
             <div>
-                <h1>Hello { this.props.user.login }</h1>
+                <h1>{ Translator.trans('L_HELLO_NAME', { name: this.props.user.login }) }</h1>
                 <button className="btn btn-primary" onClick={ this.logoutHandler }>{ Translator.trans('L_LOGOUT') }</button>
             </div>
         );

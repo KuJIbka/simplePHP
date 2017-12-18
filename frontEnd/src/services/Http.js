@@ -1,5 +1,6 @@
 import History from 'services/History';
 import Notify from 'services/Notify';
+import Translator from 'bazinga-translator';
 
 class Http {
     request(method, url, data, headers = {}) {
@@ -84,6 +85,10 @@ class Http {
             }
         }
         return fData.join("&").replace(/%20/g, "+");
+    }
+
+    getLocalizedUrl(url) {
+        return '/' + Translator.locale + url;
     }
 }
 

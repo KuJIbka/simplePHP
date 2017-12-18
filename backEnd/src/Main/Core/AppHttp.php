@@ -7,6 +7,7 @@ use Main\Exception\CommonFatalError;
 use Main\Factory\ResponseFactory;
 use Main\Service\Config;
 use Main\Service\DB;
+use Main\Service\Router;
 use Main\Service\Session\SessionManager;
 use Main\Service\TranslationsService;
 use Sabre\HTTP\Response;
@@ -14,6 +15,7 @@ use Sabre\HTTP\Sapi;
 
 class AppHttp extends App
 {
+    /** @var Router */
     protected $router;
 
     public function __construct()
@@ -21,7 +23,8 @@ class AppHttp extends App
         parent::__construct();
         SessionManager::get()->open();
         SessionManager::get()->close();
-        $this->router = new Router(require_once PATH_CONFIG.'/rout.php');
+        $this->router = Router::get();
+        $this->router->setRoutes(require_once PATH_CONFIG.'/rout.php');
     }
 
     public function run()

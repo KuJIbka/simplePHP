@@ -2,22 +2,14 @@
 
 namespace Main\Controller;
 
+use Main\Service\Router;
 use Main\Service\Templater;
-use Sabre\HTTP\Response;
 
 class BaseController
 {
     public function render($string, array $array = array()): string
     {
+        Templater::get()->getTemplater()->addGlobal('_locale', Router::get()->getRequestLocale());
         return Templater::get()->getTemplater()->render($string, $array);
-    }
-
-    public function getJsonResponse($data = null)
-    {
-        return new Response(
-            null,
-            ['Content-type' => 'application/json'],
-            json_encode($data, JSON_UNESCAPED_UNICODE)
-        );
     }
 }
