@@ -8,6 +8,7 @@ use Main\Form\Data\LoginFormData;
 use Main\Exception\WrongData;
 use Main\Factory\ResponseFactory;
 use Main\Service\DB;
+use Main\Service\Router;
 use Main\Service\Session\SessionManager;
 use Main\Struct\DefaultResponseData;
 
@@ -43,8 +44,10 @@ class AuthController extends BaseController
                 if ($userLimitRepository->checkLoginCount($userLimit)) {
                     if (!password_verify($password, $user->getPassword())) {
                         $userLimitRepository->changeLoginCount($userLimit, 1);
+                        DB::get()->getEm()->persist($userLimit);
                     } else {
                         $userLimitRepository->clearLoginCount($userLimit);
+                        DB::get()->getEm()->persist($userLimit);
                         SessionManager::get()->open();
                         SessionManager::get()->regenerateId(true);
                         SessionManager::get()->setLoggedUser($user);
@@ -56,6 +59,10 @@ class AuthController extends BaseController
                             [ 'userData' => $user ]
                         );
                         $resp = ResponseFactory::getJsonResponse($responseData);
+                        if (Router::get()->getRequestLocale() !== $user->getLang()) {
+                            $user->setLang(Router::get()->getRequestLocale());
+                            DB::get()->getEm()->persist($user);
+                        }
                     }
                     DB::get()->getEm()->flush();
                     DB::get()->getEm()->commit();

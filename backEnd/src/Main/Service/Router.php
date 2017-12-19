@@ -2,7 +2,9 @@
 
 namespace Main\Service;
 
+use Doctrine\ORM\OptimisticLockException;
 use Main\Factory\ResponseFactory;
+use Main\Service\Session\SessionManager;
 use Main\Utils\AbstractSingleton;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGenerator;
@@ -49,6 +51,20 @@ class Router extends AbstractSingleton
             $controllerName = $this->requestParameters[self::ROUTE_PARAM_CONTROLLER];
             $parseRoute = explode(":", $controllerName);
             if (is_callable(array($parseRoute[0], $parseRoute[1]))) {
+                if (SessionManager::get()->isLogged()) {
+                    $user = SessionManager::get()->getLoggedUser();
+                    if ($this->getRequestLocale() !== $user->getLang()) {
+                        $user->setLang($this->getRequestLocale());
+                        DB::get()->getEm()->persist($user);
+                        try {
+                            DB::get()->getEm()->flush();
+                        } catch (OptimisticLockException $e) {
+                        }
+                    }
+                }
+                if ($_COOKIE['_locale'] !== $this->getRequestLocale()) {
+                    setcookie('_locale', $this->getRequestLocale(), 0, '/');
+                }
                 $controller = new $parseRoute[0];
                 return $controller->{$parseRoute[1]}();
             }

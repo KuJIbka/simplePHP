@@ -39,6 +39,5 @@ class UserLimitRepository extends EntityRepository
     {
         $prevValue = $userLimit->getLoginTryCount();
         $userLimit->setLoginTryCount($prevValue + $val)->setLoginTryCountTime($_SERVER['REQUEST_TIME']);
-        $this->getEntityManager()->persist($userLimit);
     }
 }

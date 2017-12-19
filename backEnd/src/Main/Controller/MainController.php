@@ -20,8 +20,8 @@ class MainController extends BaseController
         if (SessionManager::get()->isLogged()) {
             $user = SessionManager::get()->getLoggedUser();
             $resultLang = $user->getLang();
-        } elseif (isset($_COOKIE['lang']) && in_array($_COOKIE['lang'], $availableLangs)) {
-            $resultLang = $_COOKIE['lang'];
+        } elseif (isset($_COOKIE['_locale']) && in_array($_COOKIE['_locale'], $availableLangs)) {
+            $resultLang = $_COOKIE['_locale'];
         }
         return ResponseFactory::getSimpleResponse(
             null,
