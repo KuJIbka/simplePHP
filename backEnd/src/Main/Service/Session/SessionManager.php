@@ -30,6 +30,9 @@ class SessionManager extends AbstractSingleton
     /** @var MainSessionHandlerInterface */
     protected $handler;
 
+    /**
+     * @throws BaseException
+     */
     public function init()
     {
         $this->usedDriver = Config::get()->getParam('session_save_handler');
@@ -197,6 +200,9 @@ class SessionManager extends AbstractSingleton
         }
     }
 
+    /**
+     * @throws BaseException
+     */
     public function refreshSessionData()
     {
         $wasOpen = $this->isOpened;

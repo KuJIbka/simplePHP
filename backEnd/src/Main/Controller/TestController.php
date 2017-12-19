@@ -43,7 +43,12 @@ class TestController
         $user = new User();
         $user->setName('someName');
         DB::get()->getEm()->persist($user);
-        DB::get()->getEm()->flush();
+        try {
+            DB::get()->getEm()->flush();
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+
         if ($user->getId()) {
             echo "DB - OK<br />\n";
             DB::get()->getEm()->remove($user);

@@ -3,7 +3,17 @@
 namespace Main\Core;
 
 use Doctrine\DBAL\Migrations\Configuration\Configuration;
+use Doctrine\DBAL\Migrations\Tools\Console\Command\DiffCommand;
+use Doctrine\DBAL\Migrations\Tools\Console\Command\ExecuteCommand;
+use Doctrine\DBAL\Migrations\Tools\Console\Command\GenerateCommand;
+use Doctrine\DBAL\Migrations\Tools\Console\Command\MigrateCommand;
+use Doctrine\DBAL\Migrations\Tools\Console\Command\StatusCommand;
+use Doctrine\DBAL\Migrations\Tools\Console\Command\VersionCommand;
 use Doctrine\DBAL\Migrations\Tools\Console\Helper\ConfigurationHelper;
+use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
+use Doctrine\ORM\Tools\Console\Command\ClearCache\MetadataCommand;
+use Doctrine\ORM\Tools\Console\Command\ClearCache\QueryCommand;
+use Doctrine\ORM\Tools\Console\Command\ClearCache\ResultCommand;
 use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 use Main\Command\AddNewUserCommand;
 use Main\Command\LangToJsonCommand;
@@ -12,6 +22,7 @@ use Main\Service\Config;
 use Main\Service\DB;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Helper\QuestionHelper;
 
 class AppConsole extends App
 {
@@ -35,8 +46,8 @@ class AppConsole extends App
         $configurationHelper = new ConfigurationHelper($dbConnection, $migrationConf);
         $helperSet = new HelperSet([
             'em' => $entityManagerHelper,
-            'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($dbConnection),
-            'dialog' => new \Symfony\Component\Console\Helper\QuestionHelper(),
+            'db' => new ConnectionHelper($dbConnection),
+            'dialog' => new QuestionHelper(),
             'configuration' => $configurationHelper,
             'entityManager' => $entityManagerHelper,
         ]);
@@ -47,16 +58,16 @@ class AppConsole extends App
             new AddNewUserCommand(),
             new TestCommand(),
 
-            new \Doctrine\DBAL\Migrations\Tools\Console\Command\DiffCommand(),
-            new \Doctrine\DBAL\Migrations\Tools\Console\Command\ExecuteCommand(),
-            new \Doctrine\DBAL\Migrations\Tools\Console\Command\GenerateCommand(),
-            new \Doctrine\DBAL\Migrations\Tools\Console\Command\MigrateCommand(),
-            new \Doctrine\DBAL\Migrations\Tools\Console\Command\StatusCommand(),
-            new \Doctrine\DBAL\Migrations\Tools\Console\Command\VersionCommand(),
+            new DiffCommand(),
+            new ExecuteCommand(),
+            new GenerateCommand(),
+            new MigrateCommand(),
+            new StatusCommand(),
+            new VersionCommand(),
 
-            new \Doctrine\ORM\Tools\Console\Command\ClearCache\QueryCommand(),
-            new \Doctrine\ORM\Tools\Console\Command\ClearCache\MetadataCommand(),
-            new \Doctrine\ORM\Tools\Console\Command\ClearCache\ResultCommand(),
+            new QueryCommand(),
+            new MetadataCommand(),
+            new ResultCommand(),
         ]);
     }
 

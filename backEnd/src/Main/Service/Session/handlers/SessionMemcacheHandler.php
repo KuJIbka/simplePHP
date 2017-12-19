@@ -54,6 +54,11 @@ class SessionMemcacheHandler extends SessionHandlerAbstract
         return $this->memcache->set($this->getMemcacheKey($session_id), $session_data, 0, $this->gcMaxLifeTime);
     }
 
+    /**
+     * @param string $key
+     * @return bool
+     * @throws CommonFatalError
+     */
     public function sessionLock(string $key): bool
     {
         $timeout = $this->maxLockTime * 1000000;

@@ -13,6 +13,10 @@ use Main\Struct\DefaultResponseData;
 
 class AuthController extends BaseController
 {
+    /**
+     * @return \Sabre\HTTP\Response
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     public function login()
     {
         $sessionManager = SessionManager::get();

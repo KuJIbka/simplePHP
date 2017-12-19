@@ -24,6 +24,11 @@ class SessionRedisHandler extends SessionHandlerAbstract
         $this->maxLockTime = $maxLockTime;
     }
 
+    /**
+     * @param string $key
+     * @return bool
+     * @throws CommonFatalError
+     */
     public function sessionLock(string $key): bool
     {
         $timeout = $this->maxLockTime * 1000000;

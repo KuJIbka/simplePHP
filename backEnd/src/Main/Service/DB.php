@@ -2,6 +2,7 @@
 
 namespace Main\Service;
 
+use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
@@ -19,6 +20,9 @@ class DB extends AbstractSingleton
 
     private $em = null;
 
+    /**
+     * @throws \Doctrine\ORM\ORMException
+     */
     protected function init()
     {
         $isDebug = Config::get()->getParam('debug');
@@ -43,7 +47,7 @@ class DB extends AbstractSingleton
         $doctrineConfig->setNamingStrategy(new UnderscoreNamingStrategy());
 
         if ($isDebug) {
-            $logger = new \Doctrine\DBAL\Logging\DebugStack();
+            $logger = new DebugStack();
             $doctrineConfig->setSQLLogger($logger);
         }
         $this->em = EntityManager::create($doctrineParams, $doctrineConfig);
