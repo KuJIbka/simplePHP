@@ -3,7 +3,7 @@ import Http from 'services/Http';
 export function authRequest(data) {
     return (dispatch) => {
         dispatch(authRequestSend());
-        return Http.post(Http.getLocalizedUrl('/auth/login'), data).then((resp) => {
+        return Http.csrfPost(Http.getLocalizedUrl('/auth/login'), data).then((resp) => {
             if (resp.type === 'success') {
                 dispatch(authRequestSuccess(resp.data.userData));
             }

@@ -45,6 +45,17 @@ class Http {
         return this.request('post', url, dataToSend, headers);
     }
 
+    csrfGet(url, data, headers = {}) {
+        url += '?' + this.convertToUri(data) + '&csrf_token=' + window.csrfToken;
+        return this.get(url, null, headers);
+    }
+
+    csrfPost(url, data, headers = {}) {
+        let dataToSend = this.convertToFormData(data);
+        dataToSend.append('csrf_token', window.csrfToken);
+        return this.post(url, dataToSend, headers);
+    }
+
     convertToFormData(anyFormatData) {
         if (anyFormatData instanceof FormData) {
             return anyFormatData;

@@ -4,7 +4,9 @@ namespace Main\Form;
 
 use Main\Exception\BaseFormDataException;
 use Main\Form\Validator\FormValidatorTrait;
+use Main\Form\Validator\RegExpCheck;
 use Main\Form\Validator\ValidatorInterface;
+use Main\Service\Session\SessionManager;
 use Main\Service\TranslationsService;
 use Main\Struct\LocalisationChoiceString;
 use Main\Struct\LocalisationString;
@@ -14,9 +16,9 @@ abstract class AbstractFormData implements ValidatorInterface
     use FormValidatorTrait;
 
     /**
-     * @var string
+     * @var bool
      */
-    protected $csrfToken;
+    protected $checkCsrfToken;
 
     /**
      * @var array
@@ -41,6 +43,7 @@ abstract class AbstractFormData implements ValidatorInterface
     public function __construct(array $data, bool $checkCsrfToken = false)
     {
         $this->sourceData = $data;
+        $this->checkCsrfToken = $checkCsrfToken;
         $this->execute();
     }
 
@@ -49,20 +52,39 @@ abstract class AbstractFormData implements ValidatorInterface
      */
     public function execute()
     {
-        foreach ($this->getRules() as $param => $ruleContainer) {
-            if (!property_exists($this, $param)) {
-                throw new \Exception('Class "' . self::class . '" does not contain "' . $param . '" attribute');
+        if ($this->checkCsrfToken) {
+            $csrfTokenInputName = 'csrf_token';
+            $csrfValidator = new RegExpCheck(
+                '/^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{32}$/',
+                false,
+                new LocalisationString('L_ERROR_CSRF_TOKEN')
+            );
+            $csrfTokenValue = isset($this->sourceData[$csrfTokenInputName])
+                ? $this->sourceData[$csrfTokenInputName]
+                : null;
+            $csrfValidator->setValue($csrfTokenValue)->check();
+            if (!$csrfValidator->isValid()
+                || SessionManager::get()->getParam(SessionManager::KEY_CSRF_TOKEN) !== $csrfTokenValue
+            ) {
+                $this->errors[$csrfTokenInputName] = $csrfValidator->getError();
             }
-            $value = isset($this->sourceData[$param]) ? $this->sourceData[$param] : null;
-            $ruleContainer->setValue($value);
-            if ($this->getCustomError() !== '') {
-                $ruleContainer->setCustomError($this->getCustomError());
+        }
+        if (empty($this->errors)) {
+            foreach ($this->getRules() as $param => $ruleContainer) {
+                if (!property_exists($this, $param)) {
+                    throw new \Exception('Class "' . self::class . '" does not contain "' . $param . '" attribute');
+                }
+                $value = isset($this->sourceData[$param]) ? $this->sourceData[$param] : null;
+                $ruleContainer->setValue($value);
+                if ($this->getCustomError() !== '') {
+                    $ruleContainer->setCustomError($this->getCustomError());
+                }
+                $filteredValue = $ruleContainer->execute();
+                if (!$ruleContainer->isValid()) {
+                    $this->errors[$param] = $ruleContainer->getError();
+                }
+                $this->$param = $filteredValue;
             }
-            $filteredValue = $ruleContainer->execute();
-            if (!$ruleContainer->isValid()) {
-                $this->errors[$param] = $ruleContainer->getError();
-            }
-            $this->$param = $filteredValue;
         }
     }
 

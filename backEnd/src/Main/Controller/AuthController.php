@@ -36,7 +36,7 @@ class AuthController extends BaseController
             )) {
                 throw new WrongData();
             }
-            $data = new LoginFormData($_POST);
+            $data = new LoginFormData($_POST, true);
             $data->isValidWithThrowException();
             $login = $data->getLogin();
             $password = $data->getPassword();
