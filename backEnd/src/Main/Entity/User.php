@@ -2,8 +2,11 @@
 
 namespace Main\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
- * @Entity(repositoryClass="Main\Repository\UserRepository") @Table(name="users")
+ * @Entity(repositoryClass="Main\Repository\UserRepository")
+ * @Table(name="users")
  */
 class User implements \JsonSerializable
 {
@@ -12,25 +15,40 @@ class User implements \JsonSerializable
      * @Column(type="integer", nullable=false, options={"unsigned": true})
      * @GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /** @Column(type="string", length=30, nullable=false) */
-    private $name = '';
+    protected $name = '';
 
     /** @Column(type="string", length=20, nullable=false, unique=true) */
-    private $login = '';
+    protected $login = '';
 
     /** @Column(type="string", length=255, nullable=false) */
-    private $password = '';
+    protected $password = '';
 
     /** @Column(type="decimal", precision=8, scale=2, nullable=false) */
-    private $balance = 0.0;
+    protected $balance = 0.0;
 
     /** @Column(type="string", length=3, nullable=false) */
-    private $lang = '';
+    protected $lang = '';
 
-    /** @OneToOne(targetEntity="UserLimit", mappedBy="user") */
-    private $userLimit;
+    /** @OneToOne(targetEntity="UserLimit", mappedBy="user", cascade={"persist", "remove"}) */
+    protected $userLimit;
+
+    /**
+     * @var Role[]
+     * @ManyToMany(targetEntity="Role")
+     * @JoinTable(name="users_roles",
+     *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@JoinColumn(name="role_id", referencedColumnName="id")}
+     * )
+     */
+    protected $roles;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -106,6 +124,23 @@ class User implements \JsonSerializable
     public function setLang(string $lang): self
     {
         $this->lang = $lang;
+        return $this;
+    }
+
+    /**
+     * @return Role[]
+     */
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param Role[] $roles
+     */
+    public function setRoles($roles): self
+    {
+        $this->roles = $roles;
         return $this;
     }
 

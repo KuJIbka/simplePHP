@@ -8,15 +8,18 @@ use Main\Form\Data\LoginFormData;
 use Main\Exception\WrongData;
 use Main\Factory\ResponseFactory;
 use Main\Service\DB;
+use Main\Service\PermissionService;
 use Main\Service\Router;
 use Main\Service\Session\SessionManager;
 use Main\Struct\DefaultResponseData;
+use Sabre\HTTP\Response;
 
 class AuthController extends BaseController
 {
     /**
-     * @return \Sabre\HTTP\Response
+     * @return Response
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Exception
      */
     public function login()
     {
@@ -27,7 +30,10 @@ class AuthController extends BaseController
         );
         $resp = ResponseFactory::getJsonResponse($responseData);
         try {
-            if ($sessionManager->isLogged()) {
+            if (!PermissionService::get()->isGranted(
+                $sessionManager->getLoggedUser(),
+                PermissionService::ACTION_MAIN_CAN_LOGIN
+            )) {
                 throw new WrongData();
             }
             $data = new LoginFormData($_POST);
@@ -48,10 +54,10 @@ class AuthController extends BaseController
                     } else {
                         $userLimitRepository->clearLoginCount($userLimit);
                         DB::get()->getEm()->persist($userLimit);
-                        SessionManager::get()->open();
-                        SessionManager::get()->regenerateId(true);
-                        SessionManager::get()->setLoggedUser($user);
-                        SessionManager::get()->close();
+                        $sessionManager->open();
+                        $sessionManager->regenerateId(true);
+                        $sessionManager->setLoggedUser($user);
+                        $sessionManager->close();
                         $responseData = new DefaultResponseData(
                             ResponseFactory::RESP_TYPE_SUCCESS,
                             '',
@@ -75,23 +81,32 @@ class AuthController extends BaseController
         return $resp;
     }
 
+    /**
+     * @return Response
+     * @throws WrongData
+     */
     public function logout()
     {
-        SessionManager::get()->open();
-        SessionManager::get()->regenerateId(true);
-        SessionManager::get()->destroySession();
-        SessionManager::get()->close();
-        return ResponseFactory::getJsonResponse(new DefaultResponseData(
-            ResponseFactory::RESP_TYPE_SUCCESS,
-            '',
-            '/'
-        ));
+        $sessionManager = SessionManager::get();
+        if ($sessionManager->isLogged()) {
+            $sessionManager->open();
+            $sessionManager->regenerateId(true);
+            $sessionManager->destroySession();
+            $sessionManager->close();
+            return ResponseFactory::getJsonResponse(new DefaultResponseData(
+                ResponseFactory::RESP_TYPE_SUCCESS,
+                '',
+                '/'
+            ));
+        } else {
+            throw new WrongData();
+        }
     }
 
     public function getUserSettings()
     {
         return ResponseFactory::getCommonSuccessResponse(
-            [ 'userData' => SessionManager::get()->getLoggedUser() ],
+            [ 'userData' => SessionManager::get()->isLogged() ? SessionManager::get()->getLoggedUser() : null ],
             ''
         );
     }

@@ -7,6 +7,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 use Doctrine\ORM\Tools\Setup;
+use Main\Repository\PermissionRepository;
+use Main\Repository\RoleRepository;
 use Main\Repository\UserRepository;
 use Main\Utils\AbstractSingleton;
 use Main\Repository\UserLimitRepository;
@@ -72,5 +74,21 @@ class DB extends AbstractSingleton
     public function getUserLimitRepository(): UserLimitRepository
     {
         return $this->getEm()->getRepository('Main\Entity\UserLimit');
+    }
+
+    /**
+     * @return RoleRepository|EntityRepository
+     */
+    public function getRoleRepository(): RoleRepository
+    {
+        return $this->getEm()->getRepository('Main\Entity\Role');
+    }
+
+    /**
+     * @return PermissionRepository|EntityRepository
+     */
+    public function getPermissionRepository(): PermissionRepository
+    {
+        return $this->getEm()->getRepository('Main\Entity\Permission');
     }
 }

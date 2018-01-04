@@ -62,7 +62,7 @@ class Router extends AbstractSingleton
                         }
                     }
                 }
-                if ($_COOKIE['_locale'] !== $this->getRequestLocale()) {
+                if (isset($_COOKIE['_locale']) && $_COOKIE['_locale'] !== $this->getRequestLocale()) {
                     setcookie('_locale', $this->getRequestLocale(), 0, '/');
                 }
                 $controller = new $parseRoute[0];

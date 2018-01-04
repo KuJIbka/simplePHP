@@ -6,6 +6,7 @@ use Main\Exception\BaseException;
 use Main\Entity\User;
 use Main\Service\Config;
 use Main\Service\DB;
+use Main\Service\PermissionService;
 use Main\Service\Session\handlers\MainSessionHandlerInterface;
 use Main\Service\Session\handlers\SessionMemcachedHandler;
 use Main\Service\Session\handlers\SessionMemcacheHandler;
@@ -23,12 +24,18 @@ class SessionManager extends AbstractSingleton
     const SAVE_HANDLER_MEMCACHED = 'memcached';
 
     const KEY_USER_ID = 'user_id';
+    const KEY_CSRF_TOKEN = 'csrf_token';
 
     protected static $inst;
     protected $isOpened = false;
     protected $usedDriver = '';
     /** @var MainSessionHandlerInterface */
     protected $handler;
+
+    /**
+     * @var User
+     */
+    private $tempUser;
 
     /**
      * @throws BaseException
@@ -165,9 +172,16 @@ class SessionManager extends AbstractSingleton
     {
         if ($this->isLogged()) {
             $userId = $this->getParam(self::KEY_USER_ID);
-            return DB::get()->getUserRepository()->find($userId);
+            if (!$this->tempUser || $this->tempUser->getId() !== $userId) {
+                $this->tempUser = DB::get()->getUserRepository()->find($userId);
+            }
+        } else {
+            if (!$this->tempUser || $this->tempUser->getLogin() !== session_id()) {
+                $guestRole = DB::get()->getRoleRepository()->getByName(PermissionService::ROLE_USER_GUEST);
+                $this->tempUser = (new User())->setId(0)->setLogin(session_id())->setRoles([$guestRole]);
+            }
         }
-        return null;
+        return $this->tempUser;
     }
 
     public function setLoggedUser(User $user = null)

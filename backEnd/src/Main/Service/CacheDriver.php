@@ -15,6 +15,11 @@ class CacheDriver extends AbstractSingleton
     const DRIVER_ARRAY = 'array';
     const DRIVER_REDIS = 'redis';
 
+    const KEY_PERMISSION_TREE = 'key_permission_tree';
+
+    const TAG_PERMISSIONS = 'tag_permissions';
+    const TAG_ROLES = 'tag_roles';
+
     protected static $inst;
     protected $cacheDriver;
 
@@ -51,14 +56,25 @@ class CacheDriver extends AbstractSingleton
         return $this->cacheDriver;
     }
 
-    public function saveWithTags($key, $value, array $tags, $expire = 0): bool
+    /**
+     * @param $key
+     * @param $value
+     * @param array $tags
+     * @param int $expire
+     * @return bool
+     * @throws \Exception
+     */
+    public function saveWithTags(string $key, $value, array $tags, int $expire = 0): bool
     {
         $data = [
             'v' => $value,
             't' => [],
         ];
         foreach ($tags as $tag) {
-            $data['t'][$this->getTagKey($tag)] = $_SERVER['REQUEST_TIME_MICRO'];
+            if (strrpos($tag, 'tag_') !== 0) {
+                throw new \Exception('Tag must start from tag_ string');
+            }
+            $data['t'][$tag] = $_SERVER['REQUEST_TIME_MICRO'];
         }
         return $this->getCacheDriver()->save($key, $data, $expire);
     }
@@ -66,11 +82,19 @@ class CacheDriver extends AbstractSingleton
     public function setTagsTimestamp(array $tags)
     {
         foreach ($tags as $tag) {
-            $this->getCacheDriver()->save($this->getTagKey($tag), $_SERVER['REQUEST_TIME_MICRO'], 0);
+            $this->getCacheDriver()->save($tag, $_SERVER['REQUEST_TIME_MICRO'], 0);
         }
     }
 
-    public function fetchTaggedOrUpdate($key, array $tags, $notFoundFunc, $expire = 0)
+    /**
+     * @param $key
+     * @param array $tags
+     * @param $notFoundFunc
+     * @param int $expire
+     * @return mixed
+     * @throws \Exception
+     */
+    public function fetchTaggedOrUpdate(string $key, array $tags, $notFoundFunc, int $expire = 0)
     {
         $result = $this->fetchTagged($key);
         if ($result === false) {
@@ -86,7 +110,7 @@ class CacheDriver extends AbstractSingleton
         return $result;
     }
 
-    public function fetchTagged($key)
+    public function fetchTagged(string $key)
     {
         $result = $this->getCacheDriver()->fetch($key);
         if ($result !== false) {
@@ -113,7 +137,7 @@ class CacheDriver extends AbstractSingleton
         return false;
     }
 
-    public function lock($key)
+    public function lock(string $key)
     {
         $lockedKey = $this->getLockKey($key);
         $timeout = Config::get()->getParam('cache_lock_try_timeout');
@@ -135,17 +159,12 @@ class CacheDriver extends AbstractSingleton
         return $result;
     }
 
-    public function unlock($key): bool
+    public function unlock(string $key): bool
     {
         return $this->getCacheDriver()->delete($this->getLockKey($key));
     }
 
-    public function getTagKey($key): string
-    {
-        return 'tag_'.$key;
-    }
-
-    public function getLockKey($key): string
+    public function getLockKey(string $key): string
     {
         return 'lock_'.$key;
     }

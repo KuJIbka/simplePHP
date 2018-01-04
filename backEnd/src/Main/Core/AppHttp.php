@@ -10,6 +10,7 @@ use Main\Service\DB;
 use Main\Service\Router;
 use Main\Service\Session\SessionManager;
 use Main\Service\TranslationsService;
+use Main\Service\Utils;
 use Sabre\HTTP\Response;
 use Sabre\HTTP\Sapi;
 
@@ -24,8 +25,12 @@ class AppHttp extends App
     public function __construct()
     {
         parent::__construct();
-        SessionManager::get()->open();
-        SessionManager::get()->close();
+        $sessionManager = SessionManager::get();
+        $sessionManager->open();
+        if (!$sessionManager->issetParam(SessionManager::KEY_CSRF_TOKEN)) {
+            $sessionManager->setParam(SessionManager::KEY_CSRF_TOKEN, Utils::get()->generateCode(32));
+        }
+        $sessionManager->close();
         $this->router = Router::get();
         $this->router->setRoutes(require_once PATH_CONFIG.'/rout.php');
     }
