@@ -1,8 +1,11 @@
 {
+	"name": "Simple PHP project",
+	"description": "Simple php skeleton based on custom services + symfony components",
 	"autoload": {
         "psr-0": { "": "src/" }
     },
 	"require": {
+		"php": "^7.1",
 		"twig/twig": "2.4.*",
 		"doctrine/orm": "2.5.*",
 		"doctrine/migrations": "1.6.*",
