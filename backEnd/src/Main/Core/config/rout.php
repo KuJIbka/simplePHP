@@ -8,12 +8,19 @@ use Symfony\Component\Routing\RouteCollection;
 $defaultLang = Config::get()->getParam('language_default_lang');
 $availableLangs = Config::get()->getParam('language_available_langs');
 
+# Global routes
 $rootCollection = new RouteCollection();
 $rootCollection->add(
     'setDefaultLang',
     new Route('/', [Router::ROUTE_PARAM_CONTROLLER => 'Main\Controller\MainController:setDefaultLang'])
 );
+$rootCollection->add(
+    'getAppConfig',
+    new Route('/getAppConfig', [Router::ROUTE_PARAM_CONTROLLER => 'Main\Controller\MainController:getAppConfig'])
+);
+#---------------
 
+# Localised routes
 $routes = new RouteCollection();
 $routes->add(
     'main_page',
@@ -44,6 +51,7 @@ $routes->addPrefix(
     [Router::ROUTE_PARAM_LOCALE => $defaultLang],
     [Router::ROUTE_PARAM_LOCALE => implode('|', $availableLangs)]
 );
+#---------------
 
 if (Config::get()->getParam('debug')) {
     $rootCollection->add(

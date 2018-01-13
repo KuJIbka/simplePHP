@@ -35,6 +35,11 @@ class MainController extends BaseController
         );
     }
 
+    public function getAppConfig()
+    {
+        return ResponseFactory::getCommonSuccessResponse(Config::get()->getPublicSettings());
+    }
+
     public function in()
     {
         $user = SessionManager::get()->getLoggedUser();
