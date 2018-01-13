@@ -37,7 +37,10 @@ class MainController extends BaseController
 
     public function getAppConfig()
     {
-        return ResponseFactory::getCommonSuccessResponse(Config::get()->getPublicSettings());
+        return ResponseFactory::getJsonResponse([
+            'type' => 'success',
+            'data' => Config::get()->getPublicSettings(),
+        ]);
     }
 
     public function in()

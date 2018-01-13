@@ -12,11 +12,16 @@ class BaseController
 {
     public function render($string, array $array = array()): string
     {
-        Templater::get()->getTemplater()->addGlobal('_locale', Router::get()->getRequestLocale());
+        $templates = Templater::get()->getTemplater();
+        $templates->addGlobal('_locale', Router::get()->getRequestLocale());
         $csrfToken = SessionManager::get()->getParam(SessionManager::KEY_CSRF_TOKEN);
-        Templater::get()->getTemplater()->addGlobal('csrf_token', $csrfToken);
+        $templates->addGlobal('csrf_token', $csrfToken);
+        $templates->addGlobal('appConfig', json_encode(
+            Config::get()->getPublicSettings(),
+            JSON_UNESCAPED_UNICODE
+        ));
         try {
-            return Templater::get()->getTemplater()->render($string, $array);
+            return $templates->render($string, $array);
         } catch (\Exception $e) {
             $errorText = TranslationsService::get()->getTranslator()->trans('L_COMMON_FATAL_ERROR');
             if (Config::get()->getParam('debug')) {

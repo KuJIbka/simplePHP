@@ -134,6 +134,16 @@ export default class Utils {
         return { data: store };
     }
 
+    static objToMap(obj) {
+        let m = new Map();
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                m.set(key, obj[key]);
+            }
+        }
+        return m;
+    }
+
     static createLoadingStore() {
         return {
             loaded: false,
