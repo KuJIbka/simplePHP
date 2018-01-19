@@ -38,7 +38,7 @@ class DB extends AbstractSingleton
             'password' => Config::get()->getParam('db_password'),
         ];
         $doctrinePaths= [
-            PATH_ROOT
+            PATH_ROOT.DS.'Entity'
         ];
         $doctrineConfig = Setup::createAnnotationMetadataConfiguration(
             $doctrinePaths,
