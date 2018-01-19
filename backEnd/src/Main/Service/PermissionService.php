@@ -83,15 +83,6 @@ class PermissionService extends AbstractSingleton
                         $tree[$role->getName()][$permission->getName()] = true;
                     }
                 }
-
-                $tagsTimes = $cacheDriver->getCacheDriver()->fetchMultiple($tagsForPermTree);
-                $needUpdate = [];
-                foreach ($tagsForPermTree as $tagName) {
-                    if (!isset($tagsTimes[$tagName])) {
-                        $needUpdate[] = $tagName;
-                    }
-                }
-                $cacheDriver->setTagsTimestamp($needUpdate);
                 return $tree;
             }
         );

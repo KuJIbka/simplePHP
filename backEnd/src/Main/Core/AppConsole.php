@@ -16,6 +16,7 @@ use Doctrine\ORM\Tools\Console\Command\ClearCache\QueryCommand;
 use Doctrine\ORM\Tools\Console\Command\ClearCache\ResultCommand;
 use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 use Main\Command\AddNewUserCommand;
+use Main\Command\InitCacheTagsCommand;
 use Main\Command\LangToJsonCommand;
 use Main\Command\TestCommand;
 use Main\Service\Config;
@@ -55,6 +56,7 @@ class AppConsole extends App
 
         $this->symfonyApp->addCommands([
             new LangToJsonCommand(),
+            new InitCacheTagsCommand(),
             new AddNewUserCommand(),
             new TestCommand(),
 
