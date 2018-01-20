@@ -10,6 +10,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class User implements \JsonSerializable
 {
+    const P_NAME = 'name';
+    const P_LOGIN = 'login';
+    const P_PASSWORD = 'password';
+    const P_BALANCE = 'balance';
+    const P_LANG = 'lang';
+    const L_USER_LIMIT = 'userLimit';
+
     /**
      * @Id
      * @Column(type="integer", nullable=false, options={"unsigned": true})

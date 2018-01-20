@@ -10,6 +10,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Role
 {
+    const P_NAME = 'name';
+    const P_PERMISSIONS = 'permissions';
+
     /**
      * @Id
      * @Column(type="integer", nullable=false, options={"unsigned": true})

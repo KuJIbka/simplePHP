@@ -13,6 +13,4 @@ use Main\Entity\Permission;
  */
 class PermissionRepository extends EntityRepository
 {
-    const CN_ID = 'id';
-    const CN_NAME = 'name';
 }

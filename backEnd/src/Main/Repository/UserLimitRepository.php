@@ -14,10 +14,6 @@ use Main\Service\Config;
  */
 class UserLimitRepository extends EntityRepository
 {
-    const CN_USER_ID = 'user_id';
-    const CN_LOGIN_TRY_COUNT = 'login_try_count';
-    const CN_LOGIN_TRY_COUNT_TIME = 'login_try_count_time';
-
     public function checkLoginCount(UserLimit $userLimit): bool
     {
         $maxCount = Config::get()->getParam('loginCountMax');

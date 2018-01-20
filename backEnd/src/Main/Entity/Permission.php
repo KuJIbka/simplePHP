@@ -8,6 +8,8 @@ namespace Main\Entity;
  */
 class Permission
 {
+    const P_NAME = 'name';
+
     /**
      * @Id
      * @Column(type="integer", nullable=false, options={"unsigned": true})

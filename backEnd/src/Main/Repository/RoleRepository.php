@@ -13,9 +13,6 @@ use Main\Entity\Role;
  */
 class RoleRepository extends EntityRepository
 {
-    const CN_ID = 'id';
-    const CN_NAME = 'name';
-
     /**
      * @return Role[]
      */
@@ -23,13 +20,13 @@ class RoleRepository extends EntityRepository
     {
         $alias = 'r';
         $qb = $this->createQueryBuilder($alias);
-        $q = $qb->leftJoin('r.permissions', 'p')->addSelect('p')->getQuery();
+        $q = $qb->leftJoin('r.'.Role::P_PERMISSIONS, 'p')->addSelect('p')->getQuery();
         $roles = $q->getResult();
         return $roles;
     }
 
     public function getByName(string $roleName): ?Role
     {
-        return $this->findOneBy([self::CN_NAME => $roleName]);
+        return $this->findOneBy([Role::P_NAME => $roleName]);
     }
 }

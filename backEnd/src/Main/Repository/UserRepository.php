@@ -18,12 +18,6 @@ use Main\Filter\UserFilter;
  */
 class UserRepository extends EntityRepository
 {
-    const CN_ID = 'id';
-    const CN_NAME = 'name';
-    const CN_LOGIN = 'login';
-    const CN_PASSWORD = 'password';
-    const CN_BALANCE = 'balance';
-
     /**
      * @param int $id
      * @return User|null
@@ -41,7 +35,7 @@ class UserRepository extends EntityRepository
     public function findByLogin($login): ?User
     {
         return $this->findOneBy([
-            self::CN_LOGIN => $login,
+            User::P_LOGIN => $login,
         ]);
     }
 
@@ -75,7 +69,7 @@ class UserRepository extends EntityRepository
         $qb = $this->createQueryBuilder($alias);
         $andX = $qb->expr()->andX();
         if (!is_null($filter->getIds())) {
-            $andX->add($qb->expr()->in($alias.'.'.self::CN_ID, $filter->getIds()));
+            $andX->add($qb->expr()->in($alias.'.id', $filter->getIds()));
         }
         return $andX;
     }
