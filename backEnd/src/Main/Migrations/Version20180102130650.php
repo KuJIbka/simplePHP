@@ -34,55 +34,49 @@ class Version20180102130650 extends AbstractMigration
         $this->addSql('ALTER TABLE users_roles ADD CONSTRAINT FK_51498A8EA76ED395 FOREIGN KEY (user_id) REFERENCES users (id)');
         $this->addSql('ALTER TABLE users_roles ADD CONSTRAINT FK_51498A8ED60322AC FOREIGN KEY (role_id) REFERENCES roles (id)');
         $this->addSql('ALTER TABLE user_limit ADD CONSTRAINT FK_9D541338A76ED395 FOREIGN KEY (user_id) REFERENCES users (id)');
-    }
 
-    /**
-     * @param Schema $schema
-     * @throws OptimisticLockException
-     */
-    public function postUp(Schema $schema)
-    {
-        $em = DB::get()->getEm();
-        $em->beginTransaction();
-        $user = (new User())
-            ->setLogin('testUser')
-            ->setPassword(password_hash('testPassword', PASSWORD_BCRYPT, [ 'cost' => 10 ]))
-            ->setName('testUser')
-            ->setLang(TranslationsService::LANG_RU);
+        $this->addSql('
+            INSERT INTO users SET
+              `id` = 1, 
+              `name` = "testUser",
+              `login` = "testUser",
+              `password` = "'.password_hash('testPassword', PASSWORD_BCRYPT, [ 'cost' => 10 ]).'",
+              `balance` = 0,
+              `lang` = "ru"
+        ;');
 
-        $em->persist($user);
-        $em->flush();
+        $this->addSql('
+            INSERT INTO user_limit SET
+              user_id = 1,
+              login_try_count = 0,
+              login_try_count_time = 0
+        ;');
 
-        $userLimit = new UserLimit();
-        $user->setUserLimit($userLimit);
-        $userLimit->setUser($user);
+        $roles = ['ROLE_ADMIN', 'ROLE_USER_SIMPLE', 'ROLE_USER_GUEST'];
+        foreach ($roles as $role) {
+            $this->addSql('INSERT INTO roles SET `name` = :name', ['name' => $role]);
+        }
 
-        $em->persist($user);
-        $em->persist($userLimit);
+        $permissions = ['ACTION_ADMIN_LOGIN', 'ACTION_MAIN_IS_AUTHENTICATED_FULLY', 'ACTION_CAN_LOGIN'];
+        foreach ($permissions as $permission) {
+            $this->addSql('INSERT INTO permissions SET `name` = :name', ['name' => $permission]);
+        }
 
-        $ROLE_USER = (new Role())->setName(PermissionService::ROLE_USER_SIMPLE);
-        $em->persist($ROLE_USER);
-        $ACTION_IS_AUTHENTICATED_FULLY = (new Permission())
-            ->setName(PermissionService::ACTION_MAIN_IS_AUTHENTICATED_FULLY);
-        $ROLE_USER->setPermissions([$ACTION_IS_AUTHENTICATED_FULLY]);
-        $em->persist($ACTION_IS_AUTHENTICATED_FULLY);
+        $rolePerms = [[1,1], [2,2], [3,3]];
+        foreach ($rolePerms as  $rolePerm) {
+            $this->addSql('INSERT INTO roles_permissions SET role_id=:roleId, permission_id=:permissionId', [
+                'roleId' => $rolePerm[0],
+                'permissionId' => $rolePerm[1],
+            ]);
+        }
 
-        $ROLE_ADMIN = (new Role())->setName(PermissionService::ROLE_ADMIN);
-        $ACTION_ADMIN_LOGIN = (new Permission())->setName(PermissionService::ACTION_ADMIN_LOGIN);
-        $ROLE_ADMIN->setPermissions([$ACTION_ADMIN_LOGIN]);
-        $em->persist($ROLE_ADMIN);
-        $em->persist($ACTION_ADMIN_LOGIN);
-
-        $ROLE_USER_GUEST = (new Role())->setName(PermissionService::ROLE_USER_GUEST);
-        $ACTION_CAN_LOGIN = (new Permission())->setName(PermissionService::ACTION_MAIN_CAN_LOGIN);
-        $ROLE_USER_GUEST->setPermissions([$ACTION_CAN_LOGIN]);
-        $em->persist($ROLE_USER_GUEST);
-        $em->persist($ACTION_CAN_LOGIN);
-
-        $user->setRoles([$ROLE_ADMIN, $ROLE_USER]);
-
-        $em->flush();
-        $em->commit();
+        $usersRoles = [[1,1], [1,2]];
+        foreach ($usersRoles as $usersRole) {
+            $this->addSql('INSERT INTO users_roles SET user_id = :userId, role_id = :roleId', [
+                'userId' => $usersRole[0],
+                'roleId' => $usersRole[1],
+            ]);
+        }
     }
 
     public function down(Schema $schema)
