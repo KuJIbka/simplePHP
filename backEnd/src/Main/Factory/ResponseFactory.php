@@ -14,12 +14,17 @@ abstract class ResponseFactory
 
     public static function getSimpleResponse($body = null, $statusCode = 200, array $headers = []): Response
     {
+        if (!isset($headers['Content-type'])) {
+            $headers['Content-type'] = 'text/html; charset=utf-8';
+        }
         return new Response($statusCode, $headers, $body);
     }
 
     public static function getJsonResponse($body = null, $statusCode = 200, array $headers = []): Response
     {
-        $headers['Content-type'] = 'application/json';
+        if (!isset($headers['Content-type'])) {
+            $headers['Content-type'] = 'application/json; charset=utf-8';
+        }
         $body = json_encode($body, JSON_UNESCAPED_UNICODE);
         return new Response($statusCode, $headers, $body);
     }
