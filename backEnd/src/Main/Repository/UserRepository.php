@@ -47,7 +47,7 @@ class UserRepository extends EntityRepository
      *
      * @throws TransactionRequiredException
      */
-    public function findByFilter(UserFilter $filter, $start, $count)
+    public function findByFilter(UserFilter $filter, int $start = null, int $count = null)
     {
         if ($filter->isEmpty()) {
             return [];
