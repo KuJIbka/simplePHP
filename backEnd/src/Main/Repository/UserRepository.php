@@ -4,7 +4,7 @@ namespace Main\Repository;
 
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Andx;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\TransactionRequiredException;
 use Main\Exception\UserNotFound;
 use Main\Entity\User;
@@ -52,25 +52,25 @@ class UserRepository extends EntityRepository
         if ($filter->isEmpty()) {
             return [];
         }
-        $alias = 'u';
-        $qb = $this->createQueryBuilder($alias);
-        $q = $qb->select()->where($this->getExprByFilter($filter, $alias))
-            ->setFirstResult($start)
-            ->setMaxResults($count)
-            ->getQuery();
+        $uAlias = 'u';
+        $qb = $this->createQueryBuilder($uAlias);
+        $qb = $this->getQBByFilter($qb, $filter, $uAlias);
+        $start && $qb->setFirstResult($start);
+        $count && $qb->setMaxResults($count);
+        $q = $qb->getQuery();
         if ($filter->isForUpdate()) {
             $q->setLockMode(LockMode::PESSIMISTIC_WRITE);
         }
         return $q->getResult();
     }
 
-    public function getExprByFilter(UserFilter $filter, string $alias): AndX
+    public function getQBByFilter(QueryBuilder $qb, UserFilter $filter, string $alias): QueryBuilder
     {
-        $qb = $this->createQueryBuilder($alias);
         $andX = $qb->expr()->andX();
         if (!is_null($filter->getIds())) {
             $andX->add($qb->expr()->in($alias.'.id', $filter->getIds()));
         }
-        return $andX;
+        $qb->andWhere($andX);
+        return $qb;
     }
 }
