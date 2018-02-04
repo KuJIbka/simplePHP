@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Translator from 'bazinga-translator';
+import AppTranslator from 'services/AppTranslator';
 
 import { logoutRequest } from 'actions/user';
 
@@ -15,8 +15,8 @@ class Private extends React.Component {
     render() {
         return (
             <div>
-                <h1>{ Translator.trans('L_HELLO_NAME', { name: this.props.user.login }) }</h1>
-                <button className="btn btn-primary" onClick={ this.logoutHandler }>{ Translator.trans('L_LOGOUT') }</button>
+                <h1>{ AppTranslator.trans('L_HELLO_NAME', { name: this.props.user.login }) }</h1>
+                <button className="btn btn-primary" onClick={ this.logoutHandler }>{ AppTranslator.trans('L_LOGOUT') }</button>
             </div>
         );
     }

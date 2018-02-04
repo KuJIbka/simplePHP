@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Notify from 'services/Notify';
 
 import DeepEqual from 'deep-equal';
-import Translator from 'bazinga-translator';
+import AppTranslator from 'services/AppTranslator';
 
 class Noty extends React.Component {
     constructor(props) {
@@ -44,25 +44,25 @@ class Noty extends React.Component {
         let btnClass = '';
         switch (this.props.noty.type) {
             case 'success':
-                modalTitle = Translator.trans('L_SUCCESS');
+                modalTitle = AppTranslator.trans('L_SUCCESS');
                 textClass = 'text-success';
                 btnClass = 'btn-success';
                 break;
 
             case 'error':
-                modalTitle = Translator.trans('L_ERROR');
+                modalTitle = AppTranslator.trans('L_ERROR');
                 textClass = 'text-error';
                 btnClass = 'btn-error';
                 break;
 
             case 'alert':
-                modalTitle = Translator.trans('L_ALERT');
+                modalTitle = AppTranslator.trans('L_ALERT');
                 textClass = 'text-error';
                 btnClass = 'btn-error';
                 break;
 
             case 'confirm':
-                modalTitle = Translator.trans('L_CONFIRMATION');
+                modalTitle = AppTranslator.trans('L_CONFIRMATION');
                 textClass = '';
                 btnClass = 'btn-primary';
 
@@ -89,9 +89,9 @@ class Noty extends React.Component {
                         }
                         <div className="modal-footer justify-content-center">
                             { this.props.noty.type === 'confirm' &&
-                                <button type="button" className="btn btn-success" onClick={ this.onConfirmHandler }>{ Translator.trans('L_CONFIRM') }</button>
+                                <button type="button" className="btn btn-success" onClick={ this.onConfirmHandler }>{ AppTranslator.trans('L_CONFIRM') }</button>
                             }
-                            <button type="button" className={ "btn " + btnClass } data-dismiss="modal" onClick={ this.onCloseHandler }>{ Translator.trans('L_CLOSE') }</button>
+                            <button type="button" className={ "btn " + btnClass } data-dismiss="modal" onClick={ this.onCloseHandler }>{ AppTranslator.trans('L_CLOSE') }</button>
                         </div>
                     </div>
                 </div>
