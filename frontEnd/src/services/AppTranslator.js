@@ -70,7 +70,9 @@ const trans = {
 };
 
 class AppTranslator {
-    static locale = Translator.locale;
+    static getLocale() {
+        return Translator.locale;
+    }
 
     static trans(string, params, domain, locale) {
         return Translator.trans(string, params, domain, locale);
@@ -81,13 +83,14 @@ class AppTranslator {
     }
 
     static toTranslit(toTranslit) {
-        console.log(Translator);
-        for (let i = 0; i < toTranslit.length; i++) {
-            let ch = toTranslit[i];
-            if (trans[ch]) {
-                let toCh = trans[ch];
-                let reg = new RegExp(ch, "g");
-                toTranslit = toTranslit.replace(reg, toCh);
+        if (AppTranslator.getLocale() === 'ru') {
+            for (let i = 0; i < toTranslit.length; i++) {
+                let ch = toTranslit[i];
+                if (trans[ch]) {
+                    let toCh = trans[ch];
+                    let reg = new RegExp(ch, "g");
+                    toTranslit = toTranslit.replace(reg, toCh);
+                }
             }
         }
         return toTranslit;

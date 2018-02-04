@@ -105,6 +105,10 @@ class TranslationsService extends AbstractSingleton
 
     public function toTranslit(string $toTranslit): string
     {
-        return str_replace($this->cyr, $this->lat, $toTranslit);
+        if ($this->getTranslator()->getLocale() === self::LANG_RU) {
+            return str_replace($this->cyr, $this->lat, $toTranslit);
+        } else {
+            return $toTranslit;
+        }
     }
 }
