@@ -4,7 +4,6 @@ namespace Main\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Main\Entity\UserLimit;
-use Main\Service\Config;
 
 /**
  * @method UserLimit|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,26 +13,4 @@ use Main\Service\Config;
  */
 class UserLimitRepository extends EntityRepository
 {
-    public function checkLoginCount(UserLimit $userLimit): bool
-    {
-        $maxCount = Config::get()->getParam('loginCountMax');
-        $maxCountTime = Config::get()->getParam('loginCountMaxTime');
-        if ($_SERVER['REQUEST_TIME'] - $userLimit->getLoginTryCountTime() < $maxCountTime
-            && $userLimit->getLoginTryCount() >= $maxCount
-        ) {
-            return false;
-        }
-        return true;
-    }
-
-    public function clearLoginCount(UserLimit $userLimit)
-    {
-        $userLimit->setLoginTryCount(0)->setLoginTryCount(0);
-    }
-
-    public function changeLoginCount(UserLimit $userLimit, int $val)
-    {
-        $prevValue = $userLimit->getLoginTryCount();
-        $userLimit->setLoginTryCount($prevValue + $val)->setLoginTryCountTime($_SERVER['REQUEST_TIME']);
-    }
 }

@@ -11,6 +11,7 @@ use Main\Service\DB;
 use Main\Service\PermissionService;
 use Main\Service\Router;
 use Main\Service\Session\SessionManager;
+use Main\Service\UserLimitService;
 use Main\Struct\DefaultResponseData;
 use Sabre\HTTP\Response;
 
@@ -42,17 +43,18 @@ class AuthController extends BaseController
             $password = $data->getPassword();
             $userRepository = DB::get()->getUserRepository();
             $userLimitRepository = DB::get()->getUserLimitRepository();
+            $userLimitService = UserLimitService::get();
 
             DB::get()->getEm()->beginTransaction();
             $user = $userRepository->findByLogin($login);
             if ($user) {
                 $userLimit = $userLimitRepository->find($user->getId(), LockMode::PESSIMISTIC_WRITE);
-                if ($userLimitRepository->checkLoginCount($userLimit)) {
+                if ($userLimitService->checkLoginCount($userLimit)) {
                     if (!password_verify($password, $user->getPassword())) {
-                        $userLimitRepository->changeLoginCount($userLimit, 1);
+                        $userLimitService->changeLoginCount($userLimit, 1);
                         DB::get()->getEm()->persist($userLimit);
                     } else {
-                        $userLimitRepository->clearLoginCount($userLimit);
+                        $userLimitService->clearLoginCount($userLimit);
                         DB::get()->getEm()->persist($userLimit);
                         $sessionManager->open();
                         $sessionManager->regenerateId(true);
