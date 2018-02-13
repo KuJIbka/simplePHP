@@ -2,6 +2,7 @@
 
 namespace Main\Form\Validator;
 
+use Main\Service\Utils;
 use Main\Struct\LocalisationChoiceString;
 use Main\Struct\LocalisationString;
 
@@ -17,7 +18,7 @@ class Max extends BaseFormValidator
 
     public function doCheck()
     {
-        if ($this->getValue() > $this->getMax() || is_null($this->getValue())) {
+        if (Utils::get()->compareFloat($this->getValue(), $this->getMax()) === 1) {
             $this->bindError();
         }
     }

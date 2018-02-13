@@ -2,6 +2,7 @@
 
 namespace Main\Form\Validator;
 
+use Main\Service\Utils;
 use Main\Struct\LocalisationChoiceString;
 use Main\Struct\LocalisationString;
 
@@ -17,7 +18,7 @@ class Min extends BaseFormValidator
 
     public function doCheck()
     {
-        if ($this->getValue() < $this->getMin()) {
+        if (Utils::get()->compareFloat($this->getValue(), $this->getMin()) === -1) {
             $this->bindError();
         }
     }

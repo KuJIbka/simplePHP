@@ -139,9 +139,12 @@ class Utils extends AbstractSingleton
         return $this->epsilon;
     }
 
-    public function compareFloat(float $amount1, float $amount2, int $precission): int
+    public function compareFloat(float $amount1, float $amount2, int $precision = null): int
     {
-        $accuracy = pow(10, - $precission) - $this->getEpsilon();
+        if (is_null($precision)) {
+            $precision = max($this->getDecimalsCount($amount1), $this->getDecimalsCount($amount2));
+        }
+        $accuracy = pow(10, - $precision) - $this->getEpsilon();
         if (abs($amount1 - $amount2) > $accuracy) {
             if ($amount1 > $amount2) {
                 return 1;
