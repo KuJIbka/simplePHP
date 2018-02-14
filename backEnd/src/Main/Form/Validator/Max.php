@@ -18,7 +18,7 @@ class Max extends BaseFormValidator
 
     public function doCheck()
     {
-        if (Utils::get()->compareFloat($this->getValue(), $this->getMax()) === 1) {
+        if (is_null($this->getValue()) || Utils::get()->compareFloat($this->getValue(), $this->getMax()) === 1) {
             $this->bindError();
         }
     }
