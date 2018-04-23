@@ -10,7 +10,7 @@ class Max extends BaseFormValidator
 {
     protected $max;
 
-    public function __construct(float $max, bool $nullable = false, $customError = null)
+    public function __construct(float $max = null, bool $nullable = false, $customError = null)
     {
         parent::__construct($nullable, $customError);
         $this->setMax($max);

@@ -10,7 +10,7 @@ class Min extends BaseFormValidator
 {
     protected $min;
 
-    public function __construct(float $min, bool $nullable = false, $customError = null)
+    public function __construct(float $min = null, bool $nullable = false, $customError = null)
     {
         parent::__construct($nullable, $customError);
         $this->setMin($min);
