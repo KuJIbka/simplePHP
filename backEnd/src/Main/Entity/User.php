@@ -20,7 +20,7 @@ class User implements \JsonSerializable
     /**
      * @Id
      * @Column(type="integer", nullable=false, options={"unsigned": true})
-     * @GeneratedValue(strategy="AUTO")
+     * @GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
 

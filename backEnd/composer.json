@@ -7,14 +7,14 @@
 	"require": {
 		"php": "^7.1",
 		"twig/twig": "2.4.*",
-		"doctrine/orm": "2.5.*",
-		"doctrine/migrations": "1.6.*",
+		"doctrine/orm": "2.6.*",
+		"doctrine/migrations": "1.8.*",
 		"sabre/http": "4.2.*",
-        "defuse/php-encryption": "2.1.*",
-		"symfony/translation": "4.0.*",
-		"symfony/twig-bridge": "4.0.*",
-        "symfony/yaml": "4.0.*",
-        "symfony/console": "4.0.*",
-		"symfony/routing": "4.0.*"
+        "defuse/php-encryption": "2.2.*",
+		"symfony/translation": "4.1.*",
+		"symfony/twig-bridge": "4.1.*",
+        "symfony/yaml": "4.1.*",
+        "symfony/console": "4.1.*",
+		"symfony/routing": "4.1.*"
 	}
 }

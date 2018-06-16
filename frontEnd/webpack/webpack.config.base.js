@@ -71,6 +71,19 @@ module.exports = {
             }
         ]
     },
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                name: 'common',
+                minChunks: function (module, count) {
+                    if (module.resource && /analytics/.test(module.resource)) {
+                        return false;
+                    }
+                    return count > 1;
+                }
+            }
+        }
+    },
     plugins: [
         new webpack.ProvidePlugin({
             $: "jquery",
@@ -81,15 +94,6 @@ module.exports = {
         new ExtractTextPlugin({
             filename: "./css/[name].css",
             allChunks: true
-        }),
-        new webpack.optimize.CommonsChunkPlugin({
-            name: "common",
-            minChunks: function(module, count) {
-                if (module.resource && /analytics/.test(module.resource)) {
-                    return false;
-                }
-                return count > 1;
-            }
         }),
         new CopyWebpackPlugin([
 //            { from: "./img/payment_systems_icons", to: "./img/payment_systems_icons" }

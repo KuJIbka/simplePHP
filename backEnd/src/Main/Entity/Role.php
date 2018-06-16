@@ -16,7 +16,7 @@ class Role
     /**
      * @Id
      * @Column(type="integer", nullable=false, options={"unsigned": true})
-     * @GeneratedValue(strategy="AUTO")
+     * @GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
 
