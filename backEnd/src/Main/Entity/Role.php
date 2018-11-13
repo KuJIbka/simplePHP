@@ -64,6 +64,7 @@ class Role
 
     /**
      * @param Permission[] $permissions
+     * @return self
      */
     public function setPermissions(array $permissions): self
     {

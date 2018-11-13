@@ -144,6 +144,7 @@ class User implements \JsonSerializable
 
     /**
      * @param Role[] $roles
+     * @return self
      */
     public function setRoles($roles): self
     {

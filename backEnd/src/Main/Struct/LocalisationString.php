@@ -39,7 +39,7 @@ class LocalisationString
         return $this;
     }
 
-    public function addData(string $key, mixed $value): self
+    public function addData(string $key, $value): self
     {
         $this->data[$key] = $value;
         return $this;
