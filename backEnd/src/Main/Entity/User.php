@@ -135,9 +135,9 @@ class User implements \JsonSerializable
     }
 
     /**
-     * @return Role[]
+     * @return Role[]|ArrayCollection
      */
-    public function getRoles(): array
+    public function getRoles()
     {
         return $this->roles;
     }

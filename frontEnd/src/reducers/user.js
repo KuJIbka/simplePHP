@@ -60,7 +60,7 @@ export function user(state = initialState, action = {}) {
                 {
                     isLoading: false,
                     loaded: !!action.data,
-                    isAuth: !!action.data
+                    isAuth: !!action.data.id > 0
                 }
             );
 

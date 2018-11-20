@@ -14,11 +14,13 @@ class RuleContainer extends AbstractDataValueManager implements ValidatorInterfa
     /** @var AbstractDataValueManager[] */
     protected $rules = [];
     protected $key = '';
+    protected $arrayAsValue = false;
 
-    public function __construct(array $rules = [], $customError = '')
+    public function __construct(array $rules = [], $customError = '', bool $arrayAsValue = false)
     {
         $this->setCustomError($customError);
         $this->setRules($rules);
+        $this->setArrayAsValue($arrayAsValue);
     }
 
     /**
@@ -57,12 +59,22 @@ class RuleContainer extends AbstractDataValueManager implements ValidatorInterfa
         return $this;
     }
 
+    public function isArrayAsValue(): bool
+    {
+        return $this->arrayAsValue;
+    }
+
+    public function setArrayAsValue(bool $arrayAsValue): self
+    {
+        $this->arrayAsValue = $arrayAsValue;
+        return $this;
+    }
+
     public function execute()
     {
         $filteredValue = $this->getValue();
-        if (is_array($filteredValue)) {
+        if (is_array($filteredValue) && !$this->isArrayAsValue()) {
             foreach ($filteredValue as $k => $v) {
-                echo "\n";
                 $wasError = false;
                 foreach ($this->getRules() as $rule) {
                     $rule->setValue($v);

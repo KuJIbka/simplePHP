@@ -32,8 +32,8 @@ export function logoutRequest() {
         return Http.post(Http.getLocalizedUrl('/auth/logout')).then((resp) => {
             if (resp.type === 'success') {
                 dispatch(logoutRequestSuccess());
-                return resp;
             }
+            return resp;
         });
     }
 }

@@ -4,8 +4,6 @@ let autoprefixer = require("autoprefixer");
 let path = require("path");
 let CopyWebpackPlugin = require("copy-webpack-plugin");
 
-console.log(__dirname);
-
 module.exports = {
     resolve: {
         modules: [path.join(__dirname, "/../src"), "node_modules"]

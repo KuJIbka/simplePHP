@@ -108,7 +108,7 @@ class AuthController extends BaseController
     public function getUserSettings()
     {
         return ResponseFactory::getCommonSuccessResponse(
-            [ 'userData' => SessionManager::get()->isLogged() ? SessionManager::get()->getLoggedUser() : null ],
+            [ 'userData' =>  SessionManager::get()->getLoggedUser() ],
             ''
         );
     }

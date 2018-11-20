@@ -3,9 +3,11 @@
 namespace Main\Service;
 
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Main\Factory\ResponseFactory;
 use Main\Service\Session\SessionManager;
 use Main\Utils\AbstractSingleton;
+use Sabre\HTTP\Response;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
@@ -43,6 +45,10 @@ class Router extends AbstractSingleton
         $this->urlGenerator = new UrlGenerator($routes, $this->context);
     }
 
+    /**
+     * @return Response
+     * @throws ORMException
+     */
     public function getResponse()
     {
         $matcher = new UrlMatcher($this->routes, $this->context);
@@ -53,7 +59,7 @@ class Router extends AbstractSingleton
             if (is_callable(array($parseRoute[0], $parseRoute[1]))) {
                 if (SessionManager::get()->isLogged()) {
                     $user = SessionManager::get()->getLoggedUser();
-                    if ($this->getRequestLocale() !== $user->getLang()) {
+                    if ($this->getRequestLocale() && $this->getRequestLocale() !== $user->getLang()) {
                         $user->setLang($this->getRequestLocale());
                         DB::get()->getEm()->persist($user);
                         try {
