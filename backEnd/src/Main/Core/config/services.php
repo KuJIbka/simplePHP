@@ -170,8 +170,6 @@ $bindBaseController($authControllerDefinition);
 $MainControllerDefinition = $container->register(MainController::class, MainController::class);
 $bindRenderController($MainControllerDefinition);
 
-$container->register(TestController::class, TestController::class)
-    ->addArgument($appContainer);
 # --------- END Controllers ---------
 
 
