@@ -7,7 +7,6 @@ use Main\Command\InitCacheTagsCommand;
 use Main\Command\LangToJsonCommand;
 use Main\Controller\AuthController;
 use Main\Controller\MainController;
-use Main\Controller\TestController;
 use Main\Core\AppContainer;
 use Main\Entity\Permission;
 use Main\Entity\Role;
