@@ -4,19 +4,16 @@ namespace Main\Service\Session;
 
 use Main\Exception\BaseException;
 use Main\Entity\User;
+use Main\Repository\RoleRepository;
+use Main\Repository\UserRepository;
 use Main\Service\Config;
-use Main\Service\DB;
 use Main\Service\PermissionService;
 use Main\Service\Session\handlers\MainSessionHandlerInterface;
 use Main\Service\Session\handlers\SessionMemcachedHandler;
 use Main\Service\Session\handlers\SessionMemcacheHandler;
 use Main\Service\Session\handlers\SessionRedisHandler;
-use Main\Utils\AbstractSingleton;
 
-/**
- * @method static SessionManager get()
- */
-class SessionManager extends AbstractSingleton
+class SessionManager
 {
     const SAVE_HANDLER_FILES = 'files';
     const SAVE_HANDLER_REDIS = 'redis';
@@ -26,6 +23,13 @@ class SessionManager extends AbstractSingleton
     const KEY_USER_ID = 'user_id';
     const KEY_CSRF_TOKEN = 'csrf_token';
 
+    /** @var Config */
+    protected $config;
+    /** @var UserRepository */
+    protected $userRepository;
+    /** @var RoleRepository */
+    protected $roleRepository;
+    
     protected static $inst;
     protected $isOpened = false;
     protected $usedDriver = '';
@@ -37,15 +41,25 @@ class SessionManager extends AbstractSingleton
      */
     private $tempUser;
 
+    public function __construct(
+        Config $config,
+        UserRepository $userRepository,
+        RoleRepository $roleRepository
+    ) {
+        $this->config = $config;
+        $this->userRepository = $userRepository;
+        $this->roleRepository = $roleRepository;
+    }
+
     /**
      * @throws BaseException
      */
     public function init()
     {
-        $this->usedDriver = Config::get()->getParam('session_save_handler');
-        $sessionSavePath = Config::get()->getParam('session_save_path');
-        $sessionLifeTime = Config::get()->getParam('session_lifetime');
-        $sessionMaxLockTime = Config::get()->getParam('session_max_lock_time');
+        $this->usedDriver = $this->config->getParam('session_save_handler');
+        $sessionSavePath = $this->config->getParam('session_save_path');
+        $sessionLifeTime = $this->config->getParam('session_lifetime');
+        $sessionMaxLockTime = $this->config->getParam('session_max_lock_time');
 
         switch ($this->usedDriver) {
             case self::SAVE_HANDLER_FILES:
@@ -173,11 +187,11 @@ class SessionManager extends AbstractSingleton
         if ($this->isLogged()) {
             $userId = $this->getParam(self::KEY_USER_ID);
             if (!$this->tempUser || $this->tempUser->getId() !== $userId) {
-                $this->tempUser = DB::get()->getUserRepository()->find($userId);
+                $this->tempUser = $this->userRepository->find($userId);
             }
         } else {
             if (!$this->tempUser || $this->tempUser->getLogin() !== session_id()) {
-                $guestRole = DB::get()->getRoleRepository()->getByName(PermissionService::ROLE_USER_GUEST);
+                $guestRole = $this->roleRepository->getByName(PermissionService::ROLE_USER_GUEST);
                 $this->tempUser = (new User())->setId(0)->setLogin(session_id())->setRoles([$guestRole]);
             }
         }

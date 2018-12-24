@@ -2,16 +2,18 @@
 
 namespace Main\Service;
 
-use Main\Utils\AbstractSingleton;
 
-/**
- * @method static Utils get()
- */
-class Utils extends AbstractSingleton
+class Utils
 {
     protected static $inst;
     private $epsilon;
 
+    /**
+     * @param int $length
+     * @param string $alphabet
+     * @return string
+     * @throws \Exception
+     */
     public function generateCode(
         int $length,
         string $alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'

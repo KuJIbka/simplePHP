@@ -2,14 +2,10 @@
 
 namespace Main\Service;
 
-use Main\Utils\AbstractSingleton;
 use Symfony\Component\Translation\Formatter\MessageFormatter;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
 
-/**
-* @method static TranslationsService get()
-*/
-class TranslationsService extends AbstractSingleton
+class TranslationService
 {
     const LANG_RU = 'ru';
     const LANG_EN = 'en';
@@ -30,17 +26,24 @@ class TranslationsService extends AbstractSingleton
 
     protected static $inst;
 
+    /** @var Config */
+    protected $config;
+    
     /**
      * @var ExpandTranslator
      */
     protected $translator;
 
     /**
+     * TranslationService constructor.
+     * @param Config $config
      * @throws \Exception
      */
-    protected function init()
+    public function __construct(Config $config)
     {
-        $defaultLang = Config::get()->getParam('language_default_lang');
+        $this->config = $config;
+
+        $defaultLang = $this->config->getParam('language_default_lang');
         $this->translator = new ExpandTranslator($defaultLang, new MessageFormatter());
         $this->translator->addLoader('php', new PhpFileLoader());
         $this->loadFromPath(PATH_LANGS.DS);
@@ -48,7 +51,7 @@ class TranslationsService extends AbstractSingleton
 
     public function seLocale(string $locale)
     {
-        if (in_array($locale, Config::get()->getParam('language_available_langs'))) {
+        if (in_array($locale, $this->config->getParam('language_available_langs'))) {
             $this->translator->setLocale($locale);
         }
     }

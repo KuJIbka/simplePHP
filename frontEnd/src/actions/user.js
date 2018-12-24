@@ -29,7 +29,7 @@ function authRequestSuccess(data) {
 export function logoutRequest() {
     return (dispatch) => {
         dispatch(logoutRequestSend());
-        return Http.post(Http.getLocalizedUrl('/auth/logout')).then((resp) => {
+        return Http.csrfPost(Http.getLocalizedUrl('/auth/logout')).then((resp) => {
             if (resp.type === 'success') {
                 dispatch(logoutRequestSuccess());
             }
@@ -54,7 +54,7 @@ function logoutRequestSuccess() {
 export function getUserSettingsRequest() {
     return (dispatch) => {
         dispatch(getUserSettingsSend());
-        return Http.get(Http.getLocalizedUrl('/auth/getUserSettings')).then((resp) => {
+        return Http.csrfGet(Http.getLocalizedUrl('/auth/getUserSettings')).then((resp) => {
             if (resp.type === 'success') {
                 dispatch(getUserSettingsSuccess(resp.data.userData));
                 return resp;

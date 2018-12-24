@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Role
 {
+    const P_ID = 'id';
     const P_NAME = 'name';
     const P_PERMISSIONS = 'permissions';
 

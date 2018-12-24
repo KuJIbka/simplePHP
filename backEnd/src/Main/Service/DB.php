@@ -4,38 +4,39 @@ namespace Main\Service;
 
 use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\Setup;
-use Main\Repository\PermissionRepository;
-use Main\Repository\RoleRepository;
-use Main\Repository\UserRepository;
-use Main\Utils\AbstractSingleton;
-use Main\Repository\UserLimitRepository;
 
-/**
- * @method static DB get()
- */
-class DB extends AbstractSingleton
+class DB
 {
-    protected static $inst;
-
-    private $em = null;
+    /** @var Config */
+    protected $config;
+    /** @var CacheDriver */
+    protected $cacheDriver;
+    
+    /** @var EntityManager */
+    protected $em;
 
     /**
-     * @throws \Doctrine\ORM\ORMException
+     * @param Config $config
+     * @param CacheDriver $cacheDriver
+     * @throws ORMException
      */
-    protected function init()
+    public function __construct(Config $config, CacheDriver $cacheDriver)
     {
-        $isDebug = Config::get()->getParam('debug');
+        $this->config = $config;
+        $this->cacheDriver = $cacheDriver;
+        
+        $isDebug = $this->config->getParam('debug');
         $doctrineParams = [
-            'driver' => Config::get()->getParam('db_driver'),
-            'host' => Config::get()->getParam('db_host'),
-            'port' => Config::get()->getParam('db_port'),
-            'dbname' => Config::get()->getParam('db_dbname'),
-            'charset' => Config::get()->getParam('db_charset'),
-            'user' => Config::get()->getParam('db_user'),
-            'password' => Config::get()->getParam('db_password'),
+            'driver' => $this->config->getParam('db_driver'),
+            'host' => $this->config->getParam('db_host'),
+            'port' => $this->config->getParam('db_port'),
+            'dbname' => $this->config->getParam('db_dbname'),
+            'charset' => $this->config->getParam('db_charset'),
+            'user' => $this->config->getParam('db_user'),
+            'password' => $this->config->getParam('db_password'),
         ];
         $doctrinePaths= [
             PATH_ROOT.DS.'Entity'
@@ -44,7 +45,7 @@ class DB extends AbstractSingleton
             $doctrinePaths,
             $isDebug,
             PATH_ROOT.DS.'Core'.DS.'proxies',
-            CacheDriver::get()->getCacheDriver()
+            $this->cacheDriver->getCacheDriver()
         );
         $doctrineConfig->setNamingStrategy(new UnderscoreNamingStrategy());
 
@@ -58,37 +59,5 @@ class DB extends AbstractSingleton
     public function getEm(): EntityManager
     {
         return $this->em;
-    }
-
-    /**
-     * @return UserRepository|EntityRepository
-     */
-    public function getUserRepository(): UserRepository
-    {
-        return $this->getEm()->getRepository('Main\Entity\User');
-    }
-
-    /**
-     * @return UserLimitRepository|EntityRepository
-     */
-    public function getUserLimitRepository(): UserLimitRepository
-    {
-        return $this->getEm()->getRepository('Main\Entity\UserLimit');
-    }
-
-    /**
-     * @return RoleRepository|EntityRepository
-     */
-    public function getRoleRepository(): RoleRepository
-    {
-        return $this->getEm()->getRepository('Main\Entity\Role');
-    }
-
-    /**
-     * @return PermissionRepository|EntityRepository
-     */
-    public function getPermissionRepository(): PermissionRepository
-    {
-        return $this->getEm()->getRepository('Main\Entity\Permission');
     }
 }

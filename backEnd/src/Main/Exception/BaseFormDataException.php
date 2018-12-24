@@ -8,9 +8,12 @@ class BaseFormDataException extends BaseException
 {
     protected $formDataErrors = [];
 
-    public function __construct($message = "", array $formsDataErrors = [], $code = 0, Throwable $previous = null)
-    {
-        $message = $message ?: 'L_ERROR_WRONG_DATA';
+    public function __construct(
+        $message = 'L_ERROR_WRONG_DATA',
+        array $formsDataErrors = [],
+        $code = 0,
+        Throwable $previous = null
+    ) {
         parent::__construct($message, $code, $previous);
         $this->setFormDataErrors($formsDataErrors);
     }

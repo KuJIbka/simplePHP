@@ -2,36 +2,27 @@
 
 namespace Main\Controller;
 
-use Main\Service\Config;
-use Main\Service\Router;
-use Main\Service\Session\SessionManager;
-use Main\Service\Templater;
-use Main\Service\TranslationsService;
+use Main\Factory\traits\ResponseFactoryTrait;
+use Main\Service\traits\EntityManagerTrait;
+use Main\Service\traits\PermissionServiceTrait;
+use Main\Service\traits\SessionManagerTrait;
+use Main\Service\traits\TranslationServiceTrait;
+use Main\Struct\AppRequest;
 
 class BaseController
 {
-    public function render($string, array $array = array()): string
+    use ResponseFactoryTrait,
+        SessionManagerTrait,
+        PermissionServiceTrait,
+        EntityManagerTrait,
+        TranslationServiceTrait
+    ;
+
+    /** @var AppRequest */
+    protected $appRequest;
+
+    public function setAppRequest(AppRequest $appRequest)
     {
-        $templates = Templater::get()->getTemplater();
-        $templates->addGlobal('_locale', Router::get()->getRequestLocale());
-        $csrfToken = SessionManager::get()->getParam(SessionManager::KEY_CSRF_TOKEN);
-        $templates->addGlobal('csrf_token', $csrfToken);
-        $templates->addGlobal('appConfig', json_encode(
-            Config::get()->getPublicSettings(),
-            JSON_UNESCAPED_UNICODE
-        ));
-        try {
-            return $templates->render($string, $array);
-        } catch (\Exception $e) {
-            $errorText = TranslationsService::get()->getTranslator()->trans('L_COMMON_FATAL_ERROR');
-            if (Config::get()->getParam('debug')) {
-                $errorText = $e->getMessage();
-            }
-            try {
-                return Templater::get()->getTemplater()->render('error.html.twig', ['errorText' => $errorText]);
-            } catch (\Exception $e) {
-            }
-        }
-        return null;
+        $this->appRequest = $appRequest;
     }
 }

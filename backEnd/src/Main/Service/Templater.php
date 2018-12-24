@@ -2,22 +2,22 @@
 
 namespace Main\Service;
 
-use Main\Utils\AbstractSingleton;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 
-/**
- * @method static Templater get()
- */
-class Templater extends AbstractSingleton
+class Templater
 {
     protected static $inst;
+    /** @var TranslationService */
+    protected $translationsService;
     private $templater;
 
-    protected function init()
+    public function __construct(TranslationService $translationsService)
     {
+        $this->translationsService = $translationsService;
+
         $loader = new \Twig_Loader_Filesystem(PATH_ROOT.'/Template/');
         $this->templater = new \Twig_Environment($loader);
-        $translator = TranslationsService::get()->getTranslator();
+        $translator = $this->translationsService->getTranslator();
         $this->templater->addExtension(new TranslationExtension($translator));
     }
 

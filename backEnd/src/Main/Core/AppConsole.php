@@ -20,7 +20,6 @@ use Main\Command\InitCacheTagsCommand;
 use Main\Command\LangToJsonCommand;
 use Main\Command\TestCommand;
 use Main\Service\Config;
-use Main\Service\DB;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -37,11 +36,12 @@ class AppConsole extends App
     {
         parent::__construct();
         $this->symfonyApp = new Application();
-        $em = DB::get()->getEm();
+        $em = $this->appContainer->getEm();
         $entityManagerHelper = new EntityManagerHelper($em);
         $dbConnection = $em->getConnection();
         $migrationConf = new Configuration($dbConnection);
-        $migrationConfig = Config::get()->getParam('migrations');
+        $config = $this->appContainer->getConfig();
+        $migrationConfig = $config->getParam('migrations');
         $migrationConf->setMigrationsDirectory($migrationConfig['dir']);
         $migrationConf->setMigrationsNamespace($migrationConfig['namespace']);
         $configurationHelper = new ConfigurationHelper($dbConnection, $migrationConf);
@@ -55,10 +55,10 @@ class AppConsole extends App
         $this->symfonyApp->setHelperSet($helperSet);
 
         $this->symfonyApp->addCommands([
-            new LangToJsonCommand(),
-            new InitCacheTagsCommand(),
-            new AddNewUserCommand(),
-            new TestCommand(),
+            $this->appContainer->get(LangToJsonCommand::class),
+            $this->appContainer->get(InitCacheTagsCommand::class),
+            $this->appContainer->get(AddNewUserCommand::class),
+            $this->appContainer->get(TestCommand::class),
 
             new DiffCommand(),
             new ExecuteCommand(),
@@ -79,7 +79,7 @@ class AppConsole extends App
             $this->symfonyApp->run();
         } catch (\Exception $e) {
             echo "Error found ".$e->getMessage();
-            if (Config::get()->getParam('debug')) {
+            if ($this->config->getParam('debug')) {
                 echo "\n";
                 echo "File: ".$e->getFile()."\n";
                 echo "Line: ".$e->getLine();

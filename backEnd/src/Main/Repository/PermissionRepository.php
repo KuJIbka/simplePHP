@@ -2,7 +2,6 @@
 
 namespace Main\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Main\Entity\Permission;
 
 /**
@@ -11,6 +10,6 @@ use Main\Entity\Permission;
  * @method Permission[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  * @method Permission findOneBy(array $criteria, array $orderBy = null)
  */
-class PermissionRepository extends EntityRepository
+class PermissionRepository extends BaseRepository
 {
 }

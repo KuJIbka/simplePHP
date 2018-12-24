@@ -2,9 +2,7 @@
 
 namespace Main\Struct;
 
-use Main\Exception\BaseException;
-use Main\Exception\BaseFormDataException;
-use Main\Service\TranslationsService;
+use Main\Service\TranslationService;
 
 class DefaultResponseData implements \JsonSerializable
 {
@@ -13,12 +11,20 @@ class DefaultResponseData implements \JsonSerializable
     protected $moveTo = '';
     protected $data = [];
 
+    /** @var TranslationService */
+    protected $translationService;
+
     public function __construct(string $type = '', string $text = '', string $moveTo = '', array $data = [])
     {
         $this->setType($type)
             ->setText($text)
             ->setMoveTo($moveTo)
             ->setData($data);
+    }
+
+    public function setTranslationService(TranslationService $translationService): void
+    {
+        $this->translationService = $translationService;
     }
 
     public function getType(): string
@@ -73,27 +79,14 @@ class DefaultResponseData implements \JsonSerializable
 
     public function jsonSerialize(): array
     {
+        $text = $this->translationService
+            ? $this->translationService->getTranslator()->trans($this->getText())
+            : $this->getText();
         return [
             'type' => $this->getType(),
-            'text' => TranslationsService::get()->getTranslator()->trans($this->getText()),
+            'text' => $text,
             'moveTo' => $this->getMoveTo(),
             'data' => $this->getData(),
         ];
-    }
-
-    public static function getFromException(BaseException $e): DefaultResponseData
-    {
-        $data = new self();
-        $data->setType($e->getType())
-            ->setText(TranslationsService::get()->getTranslator()->transLocalisationString($e->getMessage()))
-            ->setMoveTo($e->getMoveTo())
-            ->setData($e->getData());
-        if ($e instanceof BaseFormDataException) {
-            $formsDataErrors = $e->getFormDataErrors();
-            if (!empty($formsDataErrors)) {
-                $data->addData('formsDataErrors', $formsDataErrors);
-            }
-        }
-        return $data;
     }
 }

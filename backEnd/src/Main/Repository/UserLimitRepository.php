@@ -2,7 +2,6 @@
 
 namespace Main\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Main\Entity\UserLimit;
 
 /**
@@ -11,6 +10,6 @@ use Main\Entity\UserLimit;
  * @method UserLimit[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  * @method UserLimit findOneBy(array $criteria, array $orderBy = null)
  */
-class UserLimitRepository extends EntityRepository
+class UserLimitRepository extends BaseRepository
 {
 }

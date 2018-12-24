@@ -10,6 +10,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AddNewUserCommand extends Command
 {
+    /** @var UserService */
+    protected $userService;
+
+    public function setUserService(UserService $userService): void
+    {
+        $this->userService = $userService;
+    }
+
     protected function configure()
     {
         parent::configure();
@@ -28,8 +36,8 @@ class AddNewUserCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $login = $input->getArgument('login');
-        $password = UserService::get()->encryptPassword($input->getArgument('password'));
-        UserService::get()->addNewUser($login, $password);
+        $password = $this->userService->encryptPassword($input->getArgument('password'));
+        $this->userService->addNewUser($login, $password);
 
         $output->writeln([
             '==================================',

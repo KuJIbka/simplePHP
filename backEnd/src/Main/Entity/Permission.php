@@ -8,6 +8,7 @@ namespace Main\Entity;
  */
 class Permission
 {
+    const P_ID = 'id';
     const P_NAME = 'name';
 
     /**

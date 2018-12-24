@@ -3,12 +3,12 @@
 namespace Main\Service;
 
 use Main\Entity\User;
-use Main\Utils\AbstractSingleton;
+use Main\Repository\RoleRepository;
 
 /**
  * @method static PermissionService get()
  */
-class PermissionService extends AbstractSingleton
+class PermissionService
 {
     const ROLE_ADMIN = 'ROLE_ADMIN';
     const ROLE_USER_SIMPLE = 'ROLE_USER_SIMPLE';
@@ -19,9 +19,20 @@ class PermissionService extends AbstractSingleton
     const ACTION_MAIN_IS_AUTHENTICATED_FULLY = 'ACTION_MAIN_IS_AUTHENTICATED_FULLY';
     const ACTION_MAIN_CAN_LOGIN = 'ACTION_CAN_LOGIN';
 
-    protected static $inst;
-
     protected $loadedUsersPermissions;
+
+    /** @var CacheDriver */
+    protected $cacheDriver;
+    /** @var RoleRepository */
+    protected $roleRepository;
+
+    public function __construct(
+        CacheDriver $cacheDriver,
+        RoleRepository $roleRepository
+    ) {
+        $this->cacheDriver = $cacheDriver;
+        $this->roleRepository = $roleRepository;
+    }
 
     /**
      * @param User $user
@@ -69,13 +80,13 @@ class PermissionService extends AbstractSingleton
     private function getPermissionTree(): array
     {
         $tagsForPermTree = [ CacheDriver::TAG_PERMISSIONS, CacheDriver::TAG_ROLES ];
-        $cacheDriver = CacheDriver::get();
+        $cacheDriver = $this->cacheDriver;
         return $cacheDriver->fetchTaggedOrUpdate(
             CacheDriver::KEY_PERMISSION_TREE,
             $tagsForPermTree,
             function () use ($tagsForPermTree, $cacheDriver) {
                 $tree = [];
-                $roles = DB::get()->getRoleRepository()->getRolesWithPermissions();
+                $roles = $this->roleRepository->getRolesWithPermissions();
 
                 foreach ($roles as $role) {
                     $tree[$role->getName()][$role->getName()] = true;
@@ -90,6 +101,6 @@ class PermissionService extends AbstractSingleton
 
     public function clearPermissionCache()
     {
-        CacheDriver::get()->getCacheDriver()->deleteMultiple([CacheDriver::TAG_ROLES, CacheDriver::TAG_PERMISSIONS]);
+        $this->cacheDriver->getCacheDriver()->deleteMultiple([CacheDriver::TAG_ROLES, CacheDriver::TAG_PERMISSIONS]);
     }
 }

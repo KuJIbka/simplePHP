@@ -36,7 +36,9 @@ class Http {
     }
 
     get(url, data, headers = {}) {
-        url += '?' + this.convertToUri(data);
+        if (data) {
+            url += '?' + this.convertToUri(data);
+        }
         return this.request('get', url, null, headers);
     }
 

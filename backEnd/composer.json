@@ -9,12 +9,15 @@
 		"twig/twig": "2.4.*",
 		"doctrine/orm": "2.6.*",
 		"doctrine/migrations": "1.8.*",
-		"sabre/http": "4.2.*",
         "defuse/php-encryption": "2.2.*",
 		"symfony/translation": "4.1.*",
 		"symfony/twig-bridge": "4.1.*",
         "symfony/yaml": "4.1.*",
         "symfony/console": "4.1.*",
-		"symfony/routing": "4.1.*"
-	}
+		"symfony/routing": "4.1.*",
+		"symfony/dependency-injection": "~4.1.7",
+		"symfony/http-foundation": "~4.1.7",
+		"symfony/event-dispatcher": "~4.1.7",
+        "ext-json": "*"
+    }
 }

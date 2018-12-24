@@ -2,13 +2,21 @@
 
 namespace Main\Command;
 
-use Main\Service\TranslationsService;
+use Main\Service\TranslationService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class LangToJsonCommand extends Command
 {
+    /** @var TranslationService */
+    protected $transactionService;
+
+    public function setTranslationService(TranslationService $translationsService): void
+    {
+        $this->transactionService = $translationsService;
+    }
+
     protected function configure()
     {
         parent::configure();
@@ -23,7 +31,7 @@ class LangToJsonCommand extends Command
             ''
         ]);
 
-        $translationService = TranslationsService::get();
+        $translationService = $this->transactionService;
         foreach ($translationService->getAvailableLangs() as $lang) {
             $langJsonName = $lang.'.json';
             $langPublicPath = PATH_PUBLIC.DS.'lang';
@@ -40,7 +48,7 @@ class LangToJsonCommand extends Command
                     $lang => []
                 ],
             ];
-            $forBazingaJs['translations'][$lang] = TranslationsService::get()->getTranslator()
+            $forBazingaJs['translations'][$lang] = $translationService->getTranslator()
                 ->getCatalogue($lang)
                 ->all();
             fwrite($fd, json_encode($forBazingaJs, JSON_UNESCAPED_UNICODE));

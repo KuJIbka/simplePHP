@@ -2,14 +2,8 @@
 
 namespace Main\Service;
 
-use Main\Utils\AbstractSingleton;
-
-/**
- * @method static Config get()
- */
-class Config extends AbstractSingleton
+class Config
 {
-    protected static $inst;
     private $data = [];
 
     /**

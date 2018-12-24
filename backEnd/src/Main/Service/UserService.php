@@ -2,16 +2,20 @@
 
 namespace Main\Service;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Main\Entity\User;
 use Main\Entity\UserLimit;
-use Main\Utils\AbstractSingleton;
 
-/**
- * @method static UserService get()
- */
-class UserService extends AbstractSingleton
+class UserService
 {
-    protected static $inst;
+    /** @var EntityManager */
+    protected $em;
+    
+    public function __construct(EntityManager $em)
+    {
+    }
 
     public function encryptPassword($password)
     {
@@ -22,28 +26,30 @@ class UserService extends AbstractSingleton
      * @param string $login
      * @param string $password
      * @return User
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function addNewUser(string $login, string $password): User
     {
         $user = (new User())->setLogin($login)->setPassword($password);
-        DB::get()->getEm()->persist($user);
-        DB::get()->getEm()->flush();
+        $this->em->persist($user);
+        $this->em->flush();
         $userLimit = (new UserLimit())->setUser($user);
-        DB::get()->getEm()->persist($userLimit);
-        DB::get()->getEm()->flush();
+        $this->em->persist($userLimit);
+        $this->em->flush();
         return $user;
     }
 
     /**
      * @param User $user
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function removeUser(User $user)
     {
         $userLimit = $user->getUserLimit();
-        DB::get()->getEm()->remove($userLimit);
-        DB::get()->getEm()->remove($user);
-        DB::get()->getEm()->flush();
+        $this->em->remove($userLimit);
+        $this->em->remove($user);
+        $this->em->flush();
     }
 }

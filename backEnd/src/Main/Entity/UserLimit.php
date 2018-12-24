@@ -8,6 +8,7 @@ namespace Main\Entity;
  */
 class UserLimit
 {
+    const P_ID = 'id';
     const P_USER = 'user';
     const P_LOGIN_TRY_COUNT = 'login_try_count';
     const P_LOGIN_TRY_TIME = 'login_try_time';

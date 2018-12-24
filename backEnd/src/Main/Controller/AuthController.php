@@ -3,82 +3,88 @@
 namespace Main\Controller;
 
 use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\OptimisticLockException;
 use Main\Exception\BaseException;
 use Main\Form\Data\LoginFormData;
 use Main\Exception\WrongData;
 use Main\Factory\ResponseFactory;
-use Main\Service\DB;
+use Main\Repository\traits\UserLimitRepositoryTrait;
+use Main\Repository\traits\UserRepositoryTrait;
 use Main\Service\PermissionService;
-use Main\Service\Router;
 use Main\Service\Session\SessionManager;
-use Main\Service\UserLimitService;
-use Main\Struct\DefaultResponseData;
-use Sabre\HTTP\Response;
+use Main\Service\traits\EntityManagerTrait;
+use Main\Service\traits\PermissionServiceTrait;
+use Main\Service\traits\RouterTrait;
+use Main\Service\traits\UserLimitServiceTrait;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends BaseController
 {
+    use UserLimitServiceTrait,
+        UserLimitRepositoryTrait,
+        PermissionServiceTrait,
+        EntityManagerTrait,
+        UserRepositoryTrait,
+        RouterTrait;
+
     /**
      * @return Response
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      * @throws \Exception
      */
     public function login()
     {
-        $sessionManager = SessionManager::get();
-        $responseData = new DefaultResponseData(
+        $responseData = $this->responseFactory->getDefaultResponseData(
             ResponseFactory::RESP_TYPE_ERROR,
             'L_ERROR_BAD_COMBINATION_OF_ACCOUNT_DATA'
         );
-        $resp = ResponseFactory::getJsonResponse($responseData);
+        $resp = $this->responseFactory->getJsonResponse($responseData);
         try {
-            if (!PermissionService::get()->isGranted(
-                $sessionManager->getLoggedUser(),
+            if (!$this->permissionService->isGranted(
+                $this->sessionManager->getLoggedUser(),
                 PermissionService::ACTION_MAIN_CAN_LOGIN
             )) {
                 throw new WrongData();
             }
-            $data = new LoginFormData($_POST, true);
+            $data = new LoginFormData($_POST);
             $data->isValidWithThrowException();
             $login = $data->getLogin();
             $password = $data->getPassword();
-            $userRepository = DB::get()->getUserRepository();
-            $userLimitRepository = DB::get()->getUserLimitRepository();
-            $userLimitService = UserLimitService::get();
 
-            DB::get()->getEm()->beginTransaction();
-            $user = $userRepository->findByLogin($login);
+            $this->entityManager->beginTransaction();
+            $user = $this->userRepository->findByLogin($login);
             if ($user) {
-                $userLimit = $userLimitRepository->find($user->getId(), LockMode::PESSIMISTIC_WRITE);
-                if ($userLimitService->checkLoginCount($userLimit)) {
+                $userLimit = $this->userLimitRepository->find($user->getId(), LockMode::PESSIMISTIC_WRITE);
+                if ($this->userLimitService->checkLoginCount($userLimit)) {
                     if (!password_verify($password, $user->getPassword())) {
-                        $userLimitService->changeLoginCount($userLimit, 1);
-                        DB::get()->getEm()->persist($userLimit);
+                        $this->userLimitService->changeLoginCount($userLimit, 1);
+                        $this->entityManager->persist($userLimit);
                     } else {
-                        $userLimitService->clearLoginCount($userLimit);
-                        DB::get()->getEm()->persist($userLimit);
-                        $sessionManager->open();
-                        $sessionManager->regenerateId(true);
-                        $sessionManager->setLoggedUser($user);
-                        $sessionManager->close();
-                        $responseData = new DefaultResponseData(
+                        $this->userLimitService->clearLoginCount($userLimit);
+                        $this->entityManager->persist($userLimit);
+                        $this->sessionManager->open();
+                        $this->sessionManager->regenerateId(true);
+                        $this->sessionManager->setLoggedUser($user);
+                        $this->sessionManager->close();
+                        $responseData = $this->responseFactory->getDefaultResponseData(
                             ResponseFactory::RESP_TYPE_SUCCESS,
                             '',
                             '/in',
                             [ 'userData' => $user ]
                         );
-                        $resp = ResponseFactory::getJsonResponse($responseData);
-                        if (Router::get()->getRequestLocale() !== $user->getLang()) {
-                            $user->setLang(Router::get()->getRequestLocale());
-                            DB::get()->getEm()->persist($user);
+                        $resp = $this->responseFactory->getJsonResponse($responseData);
+                        if ($this->router->getRequestLocale() !== $user->getLang()) {
+                            $user->setLang($this->router->getRequestLocale());
+                            $this->entityManager->persist($user);
                         }
                     }
-                    DB::get()->getEm()->flush();
-                    DB::get()->getEm()->commit();
+                    $this->entityManager->flush();
+                    $this->entityManager->commit();
                 }
             }
         } catch (BaseException $e) {
-            DB::get()->getEm()->getConnection()->isTransactionActive() && DB::get()->getEm()->rollback();
-            $resp = ResponseFactory::exceptionToResponse($e);
+            $this->entityManager->getConnection()->isTransactionActive() && $this->entityManager->rollback();
+            $resp = $this->responseFactory->exceptionToResponse($e);
         }
         return $resp;
     }
@@ -89,13 +95,17 @@ class AuthController extends BaseController
      */
     public function logout()
     {
-        $sessionManager = SessionManager::get();
-        if ($sessionManager->isLogged()) {
-            $sessionManager->open();
-            $sessionManager->regenerateId(true);
-            $sessionManager->destroySession();
-            $sessionManager->close();
-            return ResponseFactory::getJsonResponse(new DefaultResponseData(
+        if ($this->sessionManager->isLogged()) {
+            $csrfToken = $this->sessionManager->getParam(SessionManager::KEY_CSRF_TOKEN);
+            $this->sessionManager->open();
+            $this->sessionManager->regenerateId(true);
+            $this->sessionManager->destroySession();
+            $this->sessionManager->close();
+
+            $this->sessionManager->open();
+            $this->sessionManager->setParam(SessionManager::KEY_CSRF_TOKEN, $csrfToken);
+            $this->sessionManager->close();
+            return $this->responseFactory->getJsonResponse($this->responseFactory->getDefaultResponseData(
                 ResponseFactory::RESP_TYPE_SUCCESS,
                 '',
                 '/'
@@ -107,8 +117,8 @@ class AuthController extends BaseController
 
     public function getUserSettings()
     {
-        return ResponseFactory::getCommonSuccessResponse(
-            [ 'userData' =>  SessionManager::get()->getLoggedUser() ],
+        return $this->responseFactory->getCommonSuccessResponse(
+            [ 'userData' =>  $this->sessionManager->getLoggedUser() ],
             ''
         );
     }

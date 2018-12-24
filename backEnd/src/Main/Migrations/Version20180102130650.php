@@ -2,22 +2,21 @@
 
 namespace Main\Migrations;
 
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Migrations\AbortMigrationException;
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\ORM\OptimisticLockException;
-use Main\Entity\Permission;
-use Main\Entity\Role;
-use Main\Entity\User;
-use Main\Entity\UserLimit;
-use Main\Service\DB;
-use Main\Service\PermissionService;
-use Main\Service\TranslationsService;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
 class Version20180102130650 extends AbstractMigration
 {
+    /**
+     * @param Schema $schema
+     * @throws DBALException
+     * @throws AbortMigrationException
+     */
     public function up(Schema $schema)
     {
         // this up() migration is auto-generated, please modify it to your needs
@@ -63,7 +62,7 @@ class Version20180102130650 extends AbstractMigration
         }
 
         $rolePerms = [[1,1], [2,2], [3,3]];
-        foreach ($rolePerms as  $rolePerm) {
+        foreach ($rolePerms as $rolePerm) {
             $this->addSql('INSERT INTO roles_permissions SET role_id=:roleId, permission_id=:permissionId', [
                 'roleId' => $rolePerm[0],
                 'permissionId' => $rolePerm[1],
@@ -79,6 +78,11 @@ class Version20180102130650 extends AbstractMigration
         }
     }
 
+    /**
+     * @param Schema $schema
+     * @throws AbortMigrationException
+     * @throws DBALException
+     */
     public function down(Schema $schema)
     {
         // this down() migration is auto-generated, please modify it to your needs

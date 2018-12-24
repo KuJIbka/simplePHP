@@ -5,11 +5,14 @@ use Main\Service\Router;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
-$defaultLang = Config::get()->getParam('language_default_lang');
-$availableLangs = Config::get()->getParam('language_available_langs');
+/** @var Config $config */
+
+$defaultLang = $config->getParam('language_default_lang');
+$availableLangs = $config->getParam('language_available_langs');
 
 # Global routes
 $rootCollection = new RouteCollection();
+
 $rootCollection->add(
     'setDefaultLang',
     new Route('/', [Router::ROUTE_PARAM_CONTROLLER => 'Main\Controller\MainController:setDefaultLang'])
@@ -24,7 +27,10 @@ $rootCollection->add(
 $routes = new RouteCollection();
 $routes->add(
     'main_page',
-    new Route('', [Router::ROUTE_PARAM_CONTROLLER => 'Main\Controller\MainController:index'])
+    new Route('', [
+        Router::ROUTE_PARAM_CONTROLLER => 'Main\Controller\MainController:index',
+        Router::ROUTE_CSRF_PROTECT => false,
+    ])
 );
 $routes->add(
     'user_login',
@@ -38,7 +44,7 @@ $routes->add(
     'user_settings',
     new Route(
         '/auth/getUserSettings',
-        [Router::ROUTE_PARAM_CONTROLLER => 'Main\Controller\AuthController:getUserSettings']
+        [ Router::ROUTE_PARAM_CONTROLLER => 'Main\Controller\AuthController:getUserSettings' ]
     )
 );
 $routes->add(
@@ -52,25 +58,6 @@ $routes->addPrefix(
     [Router::ROUTE_PARAM_LOCALE => implode('|', $availableLangs)]
 );
 #---------------
-
-if (Config::get()->getParam('debug')) {
-    $rootCollection->add(
-        'test_session',
-        new Route('/testSession', [Router::ROUTE_PARAM_CONTROLLER => 'Main\Controller\TestController:testSession'])
-    );
-    $rootCollection->add(
-        'test_db',
-        new Route('/testDB', [Router::ROUTE_PARAM_CONTROLLER => 'Main\Controller\TestController:testDB'])
-    );
-    $rootCollection->add(
-        'test_cache',
-        new Route('/testCache', [Router::ROUTE_PARAM_CONTROLLER => 'Main\Controller\TestController:testCache'])
-    );
-    $rootCollection->add(
-        'test_stepSess',
-        new Route('/stepSess', [Router::ROUTE_PARAM_CONTROLLER => 'Main\Controller\TestController:stepSess'])
-    );
-}
 
 $rootCollection->addCollection($routes);
 

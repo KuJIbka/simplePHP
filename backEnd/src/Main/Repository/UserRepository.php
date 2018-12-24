@@ -3,7 +3,6 @@
 namespace Main\Repository;
 
 use Doctrine\DBAL\LockMode;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\TransactionRequiredException;
 use Main\Exception\UserNotFound;
@@ -16,7 +15,7 @@ use Main\Filter\UserFilter;
  * @method User[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  * @method User findOneBy(array $criteria, array $orderBy = null)
  */
-class UserRepository extends EntityRepository
+class UserRepository extends BaseRepository
 {
     /**
      * @param int $id
@@ -47,16 +46,14 @@ class UserRepository extends EntityRepository
      *
      * @throws TransactionRequiredException
      */
-    public function findByFilter(UserFilter $filter, int $start = null, int $count = null)
+    public function findByFilter(UserFilter $filter, int $limit = 1, int $offset = null)
     {
         if ($filter->isEmpty()) {
             return [];
         }
-        $uAlias = 'u';
-        $qb = $this->createQueryBuilder($uAlias);
-        $qb = $this->getQBByFilter($qb, $filter, $uAlias);
-        $start && $qb->setFirstResult($start);
-        $count && $qb->setMaxResults($count);
+        $qb = $this->getQBByFilter($filter);
+        $limit && $qb->setMaxResults($limit);
+        $offset && $qb->setFirstResult($offset);
         $q = $qb->getQuery();
         if ($filter->isForUpdate()) {
             $q->setLockMode(LockMode::PESSIMISTIC_WRITE);
@@ -64,13 +61,20 @@ class UserRepository extends EntityRepository
         return $q->getResult();
     }
 
-    public function getQBByFilter(QueryBuilder $qb, UserFilter $filter, string $alias): QueryBuilder
+    protected function getQBByFilter(UserFilter $filter): QueryBuilder
     {
-        $andX = $qb->expr()->andX();
-        if (!is_null($filter->getIds())) {
-            $andX->add($qb->expr()->in($alias.'.id', $filter->getIds()));
+        $alias = 'u';
+        $prefix = $alias.'.';
+        $qb = $this->createQueryBuilder($alias);
+        if (!$filter->isEmpty()) {
+            $andX = $qb->expr()->andX();
+            if (!is_null($filter->getIds())) {
+                $andX->add($qb->expr()->in($prefix.User::P_ID, $filter->getIds()));
+            }
+            if ($andX->count() > 0) {
+                $qb->andWhere($andX);
+            }
         }
-        $qb->andWhere($andX);
         return $qb;
     }
 }

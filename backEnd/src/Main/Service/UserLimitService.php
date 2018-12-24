@@ -3,19 +3,21 @@
 namespace Main\Service;
 
 use Main\Entity\UserLimit;
-use Main\Utils\AbstractSingleton;
 
-/**
- * @method static UserLimitService get()
- */
-class UserLimitService extends AbstractSingleton
+class UserLimitService
 {
-    static protected $inst;
+    /** @var Config */
+    protected $config;
+    
+    public function __construct(Config $config)
+    {
+        $this->config = $config;
+    }
 
     public function checkLoginCount(UserLimit $userLimit): bool
     {
-        $maxCount = Config::get()->getParam('loginCountMax');
-        $maxCountTime = Config::get()->getParam('loginCountMaxTime');
+        $maxCount = $this->config->getParam('loginCountMax');
+        $maxCountTime = $this->config->getParam('loginCountMaxTime');
         if ($_SERVER['REQUEST_TIME'] - $userLimit->getLoginTryCountTime() < $maxCountTime
             && $userLimit->getLoginTryCount() >= $maxCount
         ) {

@@ -9,6 +9,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class InitCacheTagsCommand extends Command
 {
+    /** @var CacheDriver */
+    protected $cacheDriver;
+
+    public function setCacheDriver(CacheDriver $cacheDriver):void
+    {
+        $this->cacheDriver = $cacheDriver;
+    }
+
     protected function configure()
     {
         parent::configure();
@@ -28,7 +36,7 @@ class InitCacheTagsCommand extends Command
             ''
         ]);
 
-        CacheDriver::get()->setTagsTimestamp($initTags);
+        $this->cacheDriver->setTagsTimestamp($initTags);
 
         $output->writeln([
             'SUCCESS',

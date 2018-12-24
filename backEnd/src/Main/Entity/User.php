@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class User implements \JsonSerializable
 {
+    const P_ID = 'id';
     const P_NAME = 'name';
     const P_LOGIN = 'login';
     const P_PASSWORD = 'password';

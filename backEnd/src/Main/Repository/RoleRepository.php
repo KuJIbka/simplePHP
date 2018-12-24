@@ -2,7 +2,6 @@
 
 namespace Main\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Main\Entity\Role;
 
 /**
@@ -11,7 +10,7 @@ use Main\Entity\Role;
  * @method Role[] findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  * @method Role findOneBy(array $criteria, array $orderBy = null)
  */
-class RoleRepository extends EntityRepository
+class RoleRepository extends BaseRepository
 {
     /**
      * @return Role[]
@@ -19,8 +18,9 @@ class RoleRepository extends EntityRepository
     public function getRolesWithPermissions(): array
     {
         $alias = 'r';
+        $prefix = $alias.'.';
         $qb = $this->createQueryBuilder($alias);
-        $q = $qb->leftJoin('r.'.Role::P_PERMISSIONS, 'p')->addSelect('p')->getQuery();
+        $q = $qb->leftJoin($prefix.Role::P_PERMISSIONS, 'p')->addSelect('p')->getQuery();
         $roles = $q->getResult();
         return $roles;
     }

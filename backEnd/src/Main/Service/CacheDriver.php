@@ -5,12 +5,8 @@ namespace Main\Service;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\RedisCache;
-use Main\Utils\AbstractSingleton;
 
-/**
- * @method static CacheDriver get()
- */
-class CacheDriver extends AbstractSingleton
+class CacheDriver
 {
     const DRIVER_ARRAY = 'array';
     const DRIVER_REDIS = 'redis';
@@ -20,22 +16,23 @@ class CacheDriver extends AbstractSingleton
     const TAG_PERMISSIONS = 'tag_permissions';
     const TAG_ROLES = 'tag_roles';
 
-    protected static $inst;
     protected $cacheDriver;
+    /** @var Config */
+    protected $config;
 
-    protected function init()
+    public function __construct(Config $config)
     {
-        parent::init();
-        switch (Config::get()->getParam('cache_driver')) {
+        $this->config = $config;
+        switch ($this->config->getParam('cache_driver')) {
             case self::DRIVER_REDIS:
                 $this->cacheDriver = new RedisCache();
                 $redis = new \Redis();
                 $redis->connect(
-                    Config::get()->getParam('redis_host'),
-                    Config::get()->getParam('redis_port'),
-                    Config::get()->getParam('redis_timeout'),
+                    $this->config->getParam('redis_host'),
+                    $this->config->getParam('redis_port'),
+                    $this->config->getParam('redis_timeout'),
                     null,
-                    Config::get()->getParam('redis_retryInterval')
+                    $this->config->getParam('redis_retryInterval')
                 );
                 $redisDriver = new RedisCache();
                 $redisDriver->setRedis($redis);
@@ -45,7 +42,7 @@ class CacheDriver extends AbstractSingleton
             default:
                 $this->cacheDriver = new ArrayCache();
         }
-        $this->cacheDriver->setNamespace(Config::get()->getParam('cache_namespace'));
+        $this->cacheDriver->setNamespace($this->config->getParam('cache_namespace'));
     }
 
     /**
@@ -140,7 +137,7 @@ class CacheDriver extends AbstractSingleton
     public function lock(string $key)
     {
         $lockedKey = $this->getLockKey($key);
-        $timeout = Config::get()->getParam('cache_lock_try_timeout');
+        $timeout = $this->config->getParam('cache_lock_try_timeout');
         $result = false;
         while ($timeout > 0) {
             if ($this->getCacheDriver()->contains($lockedKey)) {
@@ -149,7 +146,7 @@ class CacheDriver extends AbstractSingleton
                 $timeout -= $usleepVal;
                 continue;
             }
-            $result = $this->getCacheDriver()->save($lockedKey, 1, Config::get()->getParam('cache_lock_expire'));
+            $result = $this->getCacheDriver()->save($lockedKey, 1, $this->config->getParam('cache_lock_expire'));
             break;
         }
 

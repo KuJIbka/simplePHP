@@ -36,9 +36,11 @@ return [
     'session_lifetime' => 1440,
     'session_max_lock_time' => 15,
 
-    'language_default_lang' => \Main\Service\TranslationsService::LANG_RU,
+    'language_default_lang' => \Main\Service\TranslationService::LANG_RU,
     'language_available_langs' => [
-        \Main\Service\TranslationsService::LANG_RU,
-        \Main\Service\TranslationsService::LANG_EN
+        \Main\Service\TranslationService::LANG_RU,
+        \Main\Service\TranslationService::LANG_EN
     ],
+
+    'csrf_protect_default' => true,
 ];
