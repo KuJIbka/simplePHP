@@ -38,7 +38,7 @@ class Config
         if (!file_exists($filePath)) {
             throw new \Exception('File '.$filePath.' is not found');
         }
-        $this->merge(require_once $filePath);
+        $this->merge(require $filePath);
         return $this;
     }
 
@@ -51,6 +51,12 @@ class Config
     public function merge(array $data): self
     {
         $this->data = array_merge($this->data, $this->parseConfigData($data));
+        return $this;
+    }
+
+    public function setParam(string $param, $value): self
+    {
+        $this->data[$param] = $value;
         return $this;
     }
 

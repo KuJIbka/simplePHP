@@ -129,11 +129,13 @@ class SessionManager
 
     public function open()
     {
-        session_start([
-            'cookie_httponly' => true,
-            'use_strict_mode' => true,
-            'cookie_secure' => isset($_SERVER['HTTPS']) ? true : false,
-        ]);
+        if (PHP_SAPI !== 'cli') {
+            session_start([
+                'cookie_httponly' => true,
+                'use_strict_mode' => true,
+                'cookie_secure' => isset($_SERVER['HTTPS']) ? true : false,
+            ]);
+        }
         $this->isOpened = true;
     }
 
@@ -173,7 +175,9 @@ class SessionManager
 
     public function close()
     {
-        session_write_close();
+        if (PHP_SAPI !== 'cli') {
+            session_write_close();
+        }
         $this->isOpened = false;
     }
 
@@ -209,7 +213,9 @@ class SessionManager
         if (!$wasOpen) {
             $this->open();
         }
-        session_regenerate_id($delete_old_session);
+        if (PHP_SAPI !== 'cli') {
+            session_regenerate_id($delete_old_session);
+        }
         if (!$wasOpen) {
             $this->close();
         }
@@ -221,7 +227,9 @@ class SessionManager
         if (!$wasOpen) {
             $this->open();
         }
-        session_destroy();
+        if (PHP_SAPI !== 'cli') {
+            session_destroy();
+        }
         unset($_SESSION);
         if (!$wasOpen) {
             $this->close();

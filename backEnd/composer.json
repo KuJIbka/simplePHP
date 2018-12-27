@@ -18,6 +18,10 @@
 		"symfony/dependency-injection": "~4.1.7",
 		"symfony/http-foundation": "~4.1.7",
 		"symfony/event-dispatcher": "~4.1.7",
+		"phpunit/phpunit": "~7.5.1",
         "ext-json": "*"
-    }
+    },
+	"scripts": {
+		"test-main": "phpunit --configuration src/Main/Tests/phpunit.xml --testsuite main-tests"
+	}
 }

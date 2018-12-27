@@ -14,7 +14,7 @@ abstract class App
     /**
      * @throws \Exception
      */
-    public function __construct()
+    public function __construct(bool $forTest = false)
     {
         ini_set('precision', 14);
         ini_set('serialize_precision', -1);
@@ -33,15 +33,18 @@ abstract class App
 
         if (file_exists($containerConfigPath)) {
             $loadServices = function () use ($containerConfigPath, $appContainer) {
-                require_once $containerConfigPath;
+                require $containerConfigPath;
             };
             $loadServices();
         }
         $appContainer->getRawContainer()->compile();
 
         $this->config = $this->appContainer->getConfig();
-        $this->config->loadFromPath(PATH_CONFIG.'/default');
-        $this->config->loadFromPath(PATH_CONFIG.'/prod');
+        $this->config->loadFromPath(PATH_CONFIG.DS.'default');
+        $this->config->loadFromPath(PATH_CONFIG.DS.'prod');
+        if ($forTest) {
+            $this->config->loadFromPath(PATH_CONFIG.DS.'test');
+        }
 
         if ($this->config->getParam('debug')) {
             ini_set('error_reporting', E_ALL);
@@ -51,4 +54,14 @@ abstract class App
     }
 
     abstract public function run();
+
+    public function getAppContainer(): AppContainer
+    {
+        return $this->appContainer;
+    }
+
+    public function getConfig(): Config
+    {
+        return $this->config;
+    }
 }

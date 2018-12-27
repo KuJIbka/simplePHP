@@ -71,43 +71,50 @@ class Router
     public function setRoutes(RouteCollection $routes)
     {
         $this->routes = $routes;
-        $this->sitePath = isset($_GET['sitePath']) ? '/'.trim($_GET['sitePath'], ' ') : "/";
+        #$this->sitePath = isset($_GET['sitePath']) ? '/'.trim($_GET['sitePath'], ' ') : "/";
         $this->urlGenerator = new UrlGenerator($routes, $this->context);
+    }
+
+    public function getRequest(string $sitePath): ?AppRequest
+    {
+        $request = null;
+        $matcher = new UrlMatcher($this->routes, $this->context);
+        $requestParameters = $matcher->match($sitePath);
+        $controllerName = $requestParameters[self::ROUTE_PARAM_CONTROLLER];
+        $parseRoute = explode(":", $controllerName);
+        if (is_callable([$parseRoute[0], $parseRoute[1]])) {
+            if (!isset($requestParameters[self::ROUTE_CSRF_PROTECT])) {
+                $requestParameters[self::ROUTE_CSRF_PROTECT] = $this->config->getParam('csrf_protect_default');
+            }
+
+            $request = AppRequest::createFromGlobals();
+            $request->setRouterParameters(new ParameterBag($requestParameters));
+            $request->setSessionManager($this->sessionManager);
+            $request->setDefaultLocale($this->config->getParam('language_default_lang'));
+
+            $locale = isset($requestParameters[self::ROUTE_PARAM_LOCALE])
+                ? $requestParameters[self::ROUTE_PARAM_LOCALE]
+                : '';
+            if (!$locale && isset($_COOKIE['_locale']) && $_COOKIE['_locale']) {
+                $locale = $_COOKIE['_locale'];
+            }
+
+            $request->setLocale($locale);
+        }
+        return $request;
     }
 
     /**
      * @return Response
      * @throws \Exception
      */
-    public function getResponse()
+    public function getResponse(AppRequest $appRequest)
     {
-        $matcher = new UrlMatcher($this->routes, $this->context);
         try {
-            $this->requestParameters = $matcher->match($this->sitePath);
-            if (!isset($this->requestParameters[self::ROUTE_CSRF_PROTECT])) {
-                $this->requestParameters[self::ROUTE_CSRF_PROTECT] = $this->config->getParam('csrf_protect_default');
-            }
-            $controllerName = $this->requestParameters[self::ROUTE_PARAM_CONTROLLER];
+            $controllerName = $appRequest->getRouterParameters()->get(self::ROUTE_PARAM_CONTROLLER);
             $parseRoute = explode(":", $controllerName);
             if (is_callable([$parseRoute[0], $parseRoute[1]])) {
-                $request = AppRequest::createFromGlobals();
-                $request->setRouterParameters(new ParameterBag($this->requestParameters));
-                $request->setSessionManager($this->sessionManager);
-                $request->setDefaultLocale($this->config->getParam('language_default_lang'));
-
-                $locale = isset($this->requestParameters[self::ROUTE_PARAM_LOCALE])
-                    ? $this->requestParameters[self::ROUTE_PARAM_LOCALE]
-                    : '';
-                if (!$locale && isset($_COOKIE['_locale']) && $_COOKIE['_locale']) {
-                    $locale = $_COOKIE['_locale'];
-                }
-
-                $request->setLocale($locale);
-                if (isset($_COOKIE['_locale']) && $_COOKIE['_locale'] !== $locale) {
-                    setcookie('_locale', $this->getRequestLocale(), 0, '/');
-                }
-
-                $event = new RequestLifecycleBeforeMethodCall($request);
+                $event = new RequestLifecycleBeforeMethodCall($appRequest);
                 $this->appEventDispatcher->dispatch(
                     RequestLifecycleBeforeMethodCall::class,
                     $event
@@ -116,8 +123,11 @@ class Router
                 if (!$response) {
                     /** @var BaseController $controller */
                     $controller = $this->appContainer->get($parseRoute[0]);
-                    $controller->setAppRequest($request);
+                    $controller->setAppRequest($appRequest);
                     $response = $controller->{$parseRoute[1]}();
+                }
+                if (isset($_COOKIE['_locale']) && $_COOKIE['_locale'] !== $appRequest->getLocale()) {
+                    setcookie('_locale', $appRequest->getLocale(), 0, '/');
                 }
                 return $response;
             }
@@ -130,15 +140,5 @@ class Router
     public function getUrlGenerator(): ?UrlGenerator
     {
         return $this->urlGenerator;
-    }
-
-    public function getRequestParameters(): array
-    {
-        return $this->requestParameters;
-    }
-
-    public function getRequestLocale(): ?string
-    {
-        return $this->requestParameters[self::ROUTE_PARAM_LOCALE] ?? null;
     }
 }

@@ -16,7 +16,7 @@ class BaseRenderController extends BaseController
     public function render($string, array $array = array()): string
     {
         $templater = $this->templater->getTemplater();
-        $templater->addGlobal('_locale', $this->router->getRequestLocale());
+        $templater->addGlobal('_locale', $this->appRequest->getLocale());
         $csrfToken = $this->sessionManager->getParam(SessionManager::KEY_CSRF_TOKEN);
         $templater->addGlobal('csrf_token', $csrfToken);
         $templater->addGlobal('appConfig', json_encode(

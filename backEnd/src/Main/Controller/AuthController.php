@@ -73,8 +73,8 @@ class AuthController extends BaseController
                             [ 'userData' => $user ]
                         );
                         $resp = $this->responseFactory->getJsonResponse($responseData);
-                        if ($this->router->getRequestLocale() !== $user->getLang()) {
-                            $user->setLang($this->router->getRequestLocale());
+                        if ($this->appRequest->getLocale() !== $user->getLang()) {
+                            $user->setLang($this->appRequest->getLocale());
                             $this->entityManager->persist($user);
                         }
                     }

@@ -21,8 +21,9 @@ class BaseController
     /** @var AppRequest */
     protected $appRequest;
 
-    public function setAppRequest(AppRequest $appRequest)
+    public function setAppRequest(AppRequest $appRequest): self
     {
         $this->appRequest = $appRequest;
+        return $this;
     }
 }

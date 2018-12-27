@@ -16,9 +16,9 @@ class AppHttp extends App
     /**
      * @throws \Exception
      */
-    public function __construct()
+    public function __construct(bool $forTest = false)
     {
-        parent::__construct();
+        parent::__construct($forTest);
         $sessionManager = $this->appContainer->getSessionManager();
         $sessionManager->open();
         if (!$sessionManager->issetParam(SessionManager::KEY_CSRF_TOKEN)) {
@@ -34,19 +34,23 @@ class AppHttp extends App
         $router = $this->router;
         if (file_exists($routesPath)) {
             $loadRoutes = function () use ($config, $router, $routesPath) {
-                $router->setRoutes(require_once $routesPath);
+                $router->setRoutes(require $routesPath);
             };
             $loadRoutes();
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function run()
     {
         $em = $this->appContainer->getEm();
         $responseFactory = $this->appContainer->getResponseFactory();
         try {
+            $sitePath = isset($_GET['sitePath']) ? '/'.trim($_GET['sitePath'], ' ') : "/";
             /** @var Response|string $response */
-            $response = $this->router->getResponse();
+            $response = $this->router->getResponse($this->router->getRequest($sitePath));
             if ($response instanceof Response) {
                 $response->send();
             } else {
@@ -89,5 +93,10 @@ class AppHttp extends App
             }
             $response->send();
         }
+    }
+
+    public function getRouter(): Router
+    {
+        return $this->router;
     }
 }

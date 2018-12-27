@@ -3,8 +3,6 @@
 namespace Main\Command;
 
 use Main\Core\traits\AppContainerTrait;
-use Main\Entity\User;
-use Main\Filter\UserFilter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,13 +26,6 @@ class TestCommand extends Command
             'Start Test Script...',
             ''
         ]);
-
-        $userFilter = (new UserFilter())->setIds([1]);
-        $users = $this->appContainer->getEm()
-            ->getRepository(User::class)
-            ->findByFilter($userFilter)
-        ;
-        var_dump(count($users));
 
         $output->writeln([ '', 'End of test script ']);
     }

@@ -108,11 +108,13 @@ $container->register(ResponseFactory::class, ResponseFactory::class)
 $container->register(DB::class, DB::class)
     ->addArgument(new Reference(Config::class))
     ->addArgument(new Reference(CacheDriver::class))
+    ->setLazy(true)
     ->setPublic(true)
 ;
 
 $container->register(EntityManager::class)
     ->setFactory([new Reference(DB::class), 'getEm'])
+    ->setLazy(true)
     ->setPublic(true)
 ;
 
