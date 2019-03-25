@@ -81,7 +81,9 @@ class RuleContainer extends AbstractDataValueManager implements ValidatorInterfa
                     if ($rule instanceof BaseConverter) {
                         $v = $rule->convert();
                     } elseif ($rule instanceof BaseFormValidator) {
-                        $rule->setCustomError($this->getCustomError());
+                        if ($this->getCustomError()) {
+                            $rule->setCustomError($this->getCustomError());
+                        }
                         $rule->check();
                         if (!$rule->isValid()) {
                             $this->setError($rule->getError());
@@ -103,7 +105,9 @@ class RuleContainer extends AbstractDataValueManager implements ValidatorInterfa
                     $filteredValue = $rule->convert();
                 }
                 if ($rule instanceof BaseFormValidator) {
-                    $rule->setCustomError($this->getCustomError());
+                    if ($this->getCustomError()) {
+                        $rule->setCustomError($this->getCustomError());
+                    }
                     $rule->check();
                     if (!$rule->isValid()) {
                         $this->setError($rule->getError());
