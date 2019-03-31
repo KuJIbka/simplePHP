@@ -131,7 +131,7 @@ export default class Utils {
         cloneArray.map((el) => {
             store.set(el.id, el);
         });
-        return { data: store };
+        return store;
     }
 
     static objToMap(obj) {
@@ -173,12 +173,12 @@ export default class Utils {
 
         if (typeof form === "object" && form.nodeName === "FORM") {
             let length = form.elements.length;
-            for (i = 0; i < length; i++) {
+            for (let i = 0; i < length; i++) {
                 field = form.elements[i];
                 if (field.name && !field.disabled && field.type !== "file" && field.type !== "reset" && field.type !== "submit" && field.type !== "button") {
                     if (field.type === "select-multiple") {
                         length = form.elements[i].options.length;
-                        for (j = 0; j < length; j++) {
+                        for (let j = 0; j < length; j++) {
                             if(field.options[j].selected)
                                 output[output.length] = { name: field.name, value: field.options[j].value };
                         }
